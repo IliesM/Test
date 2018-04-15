@@ -78,21 +78,20 @@ class MessagingEngine
 
         foreach ($this->_userAccounts as $userAccount) {
 
-            $messages = $this->getMessageBySex($userAccount['Sex']);
+            $message = $this->getMessageBySex($userAccount['Sex']);
             $eyesAccount = $this->getEyesAccountBySex($userAccount['Sex']);
 
-            $userAccount['messages'] = $messages;
+            $userAccount['message'] = $message;
             $userAccount['eyesAccount'] = $eyesAccount;
-            $userAccount['messages'] = $this->prepareMessages($userAccount['eyesAccount'], $userAccount, $userAccount['messages']);
+            $userAccount['messages'] = $this->prepareMessage($userAccount['eyesAccount'], $userAccount, $userAccount['message']);
             array_push($preparedTasks, $userAccount);
         }
 
         return $preparedTasks;
     }
 
-    private function prepareMessages($account, $user, $messages)
+    private function prepareMessage($account, $user, $message)
     {
-        $preparedMessages = [];
         $fieldsToReplace = [
             '$User.Name$' => $user['Name'],
             '$Account.Name$' => $account['Name'],
@@ -100,18 +99,13 @@ class MessagingEngine
             '$nl$' => "\n"
         ];
 
-        foreach ($messages as $message) {
+        $preparedMessage = $message['Content'];
+        foreach ($fieldsToReplace as $field => $value) {
 
-            $preparedMessage = $message['Content'];
-            foreach ($fieldsToReplace as $field => $value) {
-
-                $preparedMessage = str_replace($field, $value, $preparedMessage);
-            }
-
-            array_push($preparedMessages, $preparedMessage);
+            $preparedMessage = str_replace($field, $value, $preparedMessage);
         }
 
-        return $preparedMessages;
+        return $preparedMessage;
     }
 
     private function getMessageBySex($sex)
