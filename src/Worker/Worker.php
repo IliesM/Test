@@ -27,7 +27,7 @@ class Worker extends Thread
      */
     public function __construct(RMQSender $sender, Logger $logger)
     {
-        $this->_timeToWait = mt_rand(1, 10);
+        $this->_timeToWait = 2/*mt_rand(1, 10)*/;
         $this->_sender = $sender;
         $this->_logger = $logger;
     }

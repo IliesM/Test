@@ -55,14 +55,17 @@ class MessagingEngine
             $tasks = $this->prepareTasks();
             foreach ($tasks as $task) {
 
-                $worker = new Worker($this->_sender, $this->_logger);
+                foreach ($tasks['messages'] as $message) {
 
-                $worker->start();
+                    $worker = new Worker($this->_sender, $this->_logger);
 
-                $worker->join();
+                    $worker->start();
 
-                $response = ResponseHelper::createResponse(ResponseState::Success, "");
-                $this->_sender->send($response);
+                    $worker->join();
+
+                    $response = ResponseHelper::createResponse(ResponseState::Success, "");
+                    $this->_sender->send($response);
+                }
             }
         }
         else {
