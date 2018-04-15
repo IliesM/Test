@@ -1,0 +1,22 @@
+{
+  "RMQConfig": {
+    "host": "127.0.0.1",
+    "port": "5672",
+    "user": "guest",
+    "password": "guest",
+    "channels": {
+      "cSharpToPhp": "cSharpToPhp",
+      "phpToCSharp": "phpToCSharp"
+    },
+    "queues": {
+      "cSharpToPhp": "cSharpToPhp",
+      "phpToCSharp": "phpToCSharp"
+    }
+  },
+  "LoggerConfig": {
+    "logDir": "logs",
+    "logFileFormat": "eyes_instadm.log",
+    "dateFormat": "Y-m-d H:i:s",
+    "outputFormat": "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n"
+  }
+}

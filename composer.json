@@ -1,0 +1,28 @@
+{
+    "name": "eyes/insta-dm",
+    "require": {
+        "monolog/monolog": "1.23",
+        "mgp25/instagram-php": "^4.0",
+        "php-amqplib/php-amqplib": "^2.7"
+    },
+    "require-dev": {
+        "monolog/monolog": "1.23",
+        "phpunit/phpunit": "^7.1"
+    },
+    "autoload": {
+        "psr-4": {
+          "Configuration\\": "src/Configuration",
+          "MessagingEngine\\": "src/MessagingEngine",
+          "EventHandler\\": "src/EventHandler",
+          "Logger\\": "src/Logger",
+          "RMQClient\\": "src/RMQClient",
+          "Worker\\": "src/Worker"
+        }
+    },
+    "authors": [
+        {
+            "name": "ilies",
+            "email": "cathalys.m@gmail.com"
+        }
+    ]
+}

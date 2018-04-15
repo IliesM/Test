@@ -1,0 +1,33 @@
+{
+  "eventType" : 3,
+  "data" : {
+    "messages":
+    [
+      {
+        "From": "F",
+        "To": "M",
+        "Content": "Hi $User.Name$,$nl$$nl$My name is $Account.Name$, i build an app named Eyes. Our team is in Toronto right now. We’re live in Denmark 🇩🇰for our Beta version.$nl$$nl$Eyes is an app about social networks and we’d like to have you as a tester 🔥$nl$$nl$If you’re interested, just come back to me in DM, the app is free of course.$nl$$nl$See you 🙌$nl$$nl$$Account.Name$"
+      },
+      {
+        "From": "F",
+        "To": "M",
+        "Content": "Hi $User.Name$,$nl$$nl$I noticed you on Instagram, my name is $Account.Name$.$nl$$nl$With my team we’re building an app named Eyes for young people like you and me. Our team is in Toronto right now.$nl$$nl$We’re live in Denmark right now for our Beta version. We would like to have you as a tester 🔥. Eyes is an app about social networks, I can give you more details if you want. $nl$$nl$If you’re interested, just come back to me in DM, the app is free of course.$nl$$nl$See you 🤞.$nl$$nl$$Account.Name$"
+      },
+      {
+        "From": "F",
+        "To": "M",
+        "Content": "Hi $User.Name$ 🖐$nl$$nl$I noticed you on Instagram, my name is $Account.Name$.$nl$$nl$With my team we’re building a free app named Eyes. We’re launching our Beta version in Denmark right now and we’d love to have you as a tester 🎉.$nl$$nl$Eyes is an app for social networks, I can give you more details if you want. $nl$$nl$If you’re in, just come back to me in DM!$nl$$nl$See you 🤙.$nl$$nl$$Account.Name$"
+      },
+      {
+        "From": "F",
+        "To": "M",
+        "Content": "Hi $User.Name$ 👋$nl$$nl$My name is $Account.Name$.$nl$$nl$With my team in Toronto, we’re building an app named Eyes for young people like you and me. $nl$$nl$Eyes is a new way to use social networks, and of course to have some fun.$nl$$nl$We’re launching our Beta version in Denmark and I noticed you on Instagram. We’d love to have you as a tester 👌.$nl$$nl$If you’re in, just come back to me in DM! The app is totally free by the way.$nl$$nl$I hope to hear back from you soon🔥$nl$$nl$$Account.Name$"
+      },
+      {
+        "From": "F",
+        "To": "M",
+        "Content": "Hi $User.Name$,$nl$$nl$I noticed you on Instagram, my name is $Account.Name$, I’m from France.$nl$$nl$With my team we’re building an app named Eyes for young people like you and me. Our team is in Toronto right now.$nl$$nl$We try through Eyes to give you the best way to use social networks, and of course, some fun.$nl$$nl$We’re launching our Beta version in Denmark and we’d love to have you as a tester 😎.$nl$$nl$If you’re in, just come back to me in DM! The app is free by the way.$nl$$nl$See you 🤜🤛$nl$$nl$$Account.Name$"
+      }
+    ]
+  }
+}
