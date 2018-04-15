@@ -39,17 +39,12 @@ class Worker extends Thread
             if (isset($this->_timeToWait)) {
 
                 sleep($this->_timeToWait);
-                //$response = ResponseHelper::createResponse(ResponseState::Success, "");
-                $this->_sender->send("success"/*$response*/);
-                //$this->_sender->close();
-
             }
 
         } catch (\Exception $e) {
 
             $this->_logger->error(sprintf("An error occurred while requesting InstagramApi : %s", $e->getMessage()));
-            //$response = ResponseHelper::createResponse(ResponseState::Failure, "");
-            $this->_sender->send("failure"/*$response*/);
+
             $this->kill();
         }
     }

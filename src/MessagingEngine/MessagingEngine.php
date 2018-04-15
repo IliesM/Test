@@ -9,6 +9,8 @@
 namespace MessagingEngine;
 
 use Configuration\Configuration;
+use EventHandler\ResponseState;
+use Helpers\ResponseHelper;
 use RMQClient\RMQSender;
 use Worker\Worker;
 
@@ -58,9 +60,13 @@ class MessagingEngine
                 $worker->start();
 
                 $worker->join();
+
+                $response = ResponseHelper::createResponse(ResponseState::Success, "");
+                $this->_sender->send($response);
             }
         }
         else {
+            
             $this->_logger->error("Accounts/Messages/Users are not initialized");
             die;
         }
