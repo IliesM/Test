@@ -49,7 +49,7 @@ class RMQReceiver
         $this->_user = $this->_rmqConfig['user'];
         $this->_password = $this->_rmqConfig['password'];
         $this->_channelName = $this->_rmqConfig['channels']['phpToCSharp'];
-        $this->_queue = $this->_rmqConfig['queues']['phpToCSharp'];
+        $this->_queue = $this->_rmqConfig['queues']['cSharpToPhp'];
         $this->_logger = $GLOBALS['logger'];
         $this->initSender();
     }
