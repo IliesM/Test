@@ -57,10 +57,10 @@ class MessagingEngine
             foreach ($tasks as $task) {
 
                 if (!$GLOBALS['isStopped']) {
+
                     $worker = new Worker($this->_sender, $this->_logger);
 
                     $worker->start();
-
                     $worker->join();
 
                     $response = ResponseHelper::createResponse(ResponseState::Success, "");
