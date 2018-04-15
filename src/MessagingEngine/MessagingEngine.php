@@ -41,9 +41,9 @@ class MessagingEngine
 
     public function loadData()
     {
-        $this->_userAccounts = ($GLOBALS['userAccounts']) ?: null;
-        $this->_eyesAccounts = ($GLOBALS['eyesAccounts']) ?: null;
-        $this->_eyesMessages = ($GLOBALS['eyesMessages']) ?: null;
+        $this->_userAccounts = ((isset($GLOBALS['userAccounts']))) ? $GLOBALS['userAccounts']: null;
+        $this->_eyesAccounts = ((isset($GLOBALS['eyesAccounts']))) ? $GLOBALS['eyesAccounts']: null;
+        $this->_eyesMessages = ((isset($GLOBALS['eyesMessages']))) ? $GLOBALS['eyesMessages']: null;
     }
 
     public function startMessaging()
