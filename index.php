@@ -22,7 +22,7 @@ $logger = new Logger($config);
 
 $GLOBALS['logger'] = $logger;
 
-$GLOBALS['messagingEngine'] = new MessagingEngine();
+$GLOBALS['messagingEngine'] = new MessagingEngine($config);
 
 $sender = new RMQSender($config);
 $receiver = new RMQReceiver($config);

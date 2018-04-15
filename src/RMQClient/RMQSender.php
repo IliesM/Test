@@ -59,11 +59,11 @@ class RMQSender
         $this->_channel = $this->_connection->channel();
     }
 
-    public function send()
+    public function send($data)
     {
         try {
 
-            $msg = new AMQPMessage('Hello World!');
+            $msg = new AMQPMessage($data);
             $this->_channel->basic_publish($msg, '', $this->_queue);
 
         } catch (\Exception $e) {

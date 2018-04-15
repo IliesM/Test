@@ -45,4 +45,9 @@ class EventHandler
     {
         $GLOBALS['messagingEngine']->startMessaging();
     }
+
+    public function stop()
+    {
+
+    }
 }

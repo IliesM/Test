@@ -8,6 +8,8 @@
 
 namespace MessagingEngine;
 
+use Configuration\Configuration;
+use RMQClient\RMQSender;
 use Worker\Worker;
 
 class MessagingEngine
@@ -19,16 +21,20 @@ class MessagingEngine
     private $_taskQueue;
     private $_logger;
     private $_workers;
+    private $_sender;
 
     /**
      * MessagingEngine constructor.
+     * @param Configuration $configuration
      */
-    public function __construct()
+    public function __construct(Configuration $configuration)
     {
         $this->_userAccounts = null;
         $this->_eyesAccounts = null;
         $this->_eyesMessages = null;
         $this->_logger = $GLOBALS['logger'];
+        $this->_sender = new RMQSender($configuration);
+
     }
 
     public function loadData()
@@ -46,7 +52,8 @@ class MessagingEngine
 
             $tasks = $this->prepareTasks();
             foreach ($tasks as $task) {
-                $worker = new Worker();
+
+                $worker = new Worker($this->_sender);
 
                 $worker->start();
             }

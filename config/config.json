@@ -2,8 +2,8 @@
   "RMQConfig": {
     "host": "127.0.0.1",
     "port": "5672",
-    "user": "guest",
-    "password": "guest",
+    "user": "admin",
+    "password": "admin",
     "channels": {
       "cSharpToPhp": "cSharpToPhp",
       "phpToCSharp": "phpToCSharp"

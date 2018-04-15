@@ -8,28 +8,49 @@
 
 namespace Worker;
 
+use EventHandler\ResponseState;
+use Helpers\ResponseHelper;
+use Logger\Logger;
+use RMQClient\RMQSender;
 use Thread;
 
 class Worker extends Thread
 {
     private $_timeToWait;
+    private $_sender;
+    private $_logger;
 
     /**
      * Worker constructor.
-     * @param $timeToWait
+     * @param RMQSender $sender
+     * @param Logger $logger
      */
-    public function __construct()
+    public function __construct(RMQSender $sender, Logger $logger)
     {
         $this->_timeToWait = mt_rand(1, 10);
+        $this->_sender = $sender;
+        $this->_logger = $logger;
     }
 
     public function run()
     {
-        if (isset($this->_timeToWait)) {
+        try {
 
-            printf("TID : %s sleep for %d secondes\n", $this->getThreadId(), $this->_timeToWait);
-            sleep($this->_timeToWait);
-            printf("TID : %s done\n", $this->getThreadId());
+            if (isset($this->_timeToWait)) {
+
+                sleep($this->_timeToWait);
+                $response = ResponseHelper::createResponse(ResponseState::Success, "");
+                $this->_sender->send($response);
+                $this->_sender->close();
+
+            }
+
+        } catch (\Exception $e) {
+
+            $this->_logger->error(sprintf("An error occurred while requesting InstagramApi : %s", $e->getMessage()));
+            $response = ResponseHelper::createResponse(ResponseState::Failure, "");
+            $this->_sender->send($response);
+            $this->kill();
         }
     }
 }
