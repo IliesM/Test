@@ -56,6 +56,8 @@ class MessagingEngine
                 $worker = new Worker($this->_sender, $this->_logger);
 
                 $worker->start();
+
+                $worker->join();
             }
         }
         else {
