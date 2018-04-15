@@ -79,7 +79,6 @@ class MessagingEngine
         foreach ($this->_userAccounts as $userAccount) {
 
             $message = $this->getMessageBySex($userAccount['Sex']);
-            echo $message.PHP_EOL;
             $eyesAccount = $this->getEyesAccountBySex($userAccount['Sex']);
 
             $userAccount['message'] = $message;
