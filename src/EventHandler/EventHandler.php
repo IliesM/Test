@@ -43,11 +43,14 @@ class EventHandler
 
     public function start($data)
     {
+        $GLOBALS['isStopped'] = false;
         $GLOBALS['messagingEngine']->startMessaging();
+        echo 'Application has been started'.PHP_EOL;
     }
 
-    public function stop()
+    public function stop($data)
     {
-
+        $GLOBALS['isStopped'] = true;
+        echo 'Application has been paused'.PHP_EOL;
     }
 }

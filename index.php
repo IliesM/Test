@@ -22,6 +22,8 @@ $logger = new Logger($config);
 
 $GLOBALS['logger'] = $logger;
 
+$GLOBALS['isStopped'] = false;
+
 $GLOBALS['messagingEngine'] = new MessagingEngine($config);
 
 $sender = new RMQSender($config);

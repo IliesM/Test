@@ -52,17 +52,20 @@ class MessagingEngine
 
         if ($this->_userAccounts && $this->_eyesAccounts && $this->_eyesMessages) {
 
+
             $tasks = $this->prepareTasks();
             foreach ($tasks as $task) {
 
-                $worker = new Worker($this->_sender, $this->_logger);
+                if (!$GLOBALS['isStopped']) {
+                    $worker = new Worker($this->_sender, $this->_logger);
 
-                $worker->start();
+                    $worker->start();
 
-                $worker->join();
+                    $worker->join();
 
-                $response = ResponseHelper::createResponse(ResponseState::Success, "");
-                $this->_sender->send($response);
+                    $response = ResponseHelper::createResponse(ResponseState::Success, "");
+                    $this->_sender->send($response);
+                }
             }
         }
         else {
