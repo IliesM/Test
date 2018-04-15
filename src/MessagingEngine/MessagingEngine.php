@@ -55,7 +55,7 @@ class MessagingEngine
             $tasks = $this->prepareTasks();
             foreach ($tasks as $task) {
 
-                foreach ($tasks['messages'] as $message) {
+                foreach ($task['messages'] as $message) {
 
                     $worker = new Worker($this->_sender, $this->_logger);
 
