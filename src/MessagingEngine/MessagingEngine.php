@@ -53,7 +53,7 @@ class MessagingEngine
             $tasks = $this->prepareTasks();
             foreach ($tasks as $task) {
 
-                $worker = new Worker($this->_sender);
+                $worker = new Worker($this->_sender, $this->_logger);
 
                 $worker->start();
             }

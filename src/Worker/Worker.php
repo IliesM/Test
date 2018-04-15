@@ -41,7 +41,7 @@ class Worker extends Thread
                 sleep($this->_timeToWait);
                 $response = ResponseHelper::createResponse(ResponseState::Success, "");
                 $this->_sender->send($response);
-                $this->_sender->close();
+                //$this->_sender->close();
 
             }
 
