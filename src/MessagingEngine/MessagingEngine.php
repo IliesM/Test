@@ -55,17 +55,14 @@ class MessagingEngine
             $tasks = $this->prepareTasks();
             foreach ($tasks as $task) {
 
-                foreach ($task['messages'] as $message) {
+                $worker = new Worker($this->_sender, $this->_logger);
 
-                    $worker = new Worker($this->_sender, $this->_logger);
+                $worker->start();
 
-                    $worker->start();
+                $worker->join();
 
-                    $worker->join();
-
-                    $response = ResponseHelper::createResponse(ResponseState::Success, "");
-                    $this->_sender->send($response);
-                }
+                $response = ResponseHelper::createResponse(ResponseState::Success, "");
+                $this->_sender->send($response);
             }
         }
         else {
@@ -81,7 +78,7 @@ class MessagingEngine
 
         foreach ($this->_userAccounts as $userAccount) {
 
-            $messages = $this->getMessagesBySex($userAccount['Sex']);
+            $messages = $this->getMessageBySex($userAccount['Sex']);
             $eyesAccount = $this->getEyesAccountBySex($userAccount['Sex']);
 
             $userAccount['messages'] = $messages;
@@ -117,7 +114,7 @@ class MessagingEngine
         return $preparedMessages;
     }
 
-    private function getMessagesBySex($sex)
+    private function getMessageBySex($sex)
     {
         $foundMessages = [];
 
@@ -128,7 +125,7 @@ class MessagingEngine
             }
         }
 
-        return $foundMessages;
+        return $foundMessages[mt_rand(0, 4)];
     }
 
     private function getEyesAccountBySex($sex)
