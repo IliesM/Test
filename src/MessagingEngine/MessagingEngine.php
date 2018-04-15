@@ -66,7 +66,7 @@ class MessagingEngine
             }
         }
         else {
-            
+
             $this->_logger->error("Accounts/Messages/Users are not initialized");
             die;
         }

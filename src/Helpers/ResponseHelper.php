@@ -18,6 +18,6 @@ class ResponseHelper
         $response["state"] = $state;
         $response["data"] = $payload;
 
-        return $response;
+        return json_encode($response);
     }
 }
