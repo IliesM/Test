@@ -2,8 +2,6 @@
 
 namespace Helpers;
 
-use EventHandler\ResponseState;
-
 /**
  * Created by IntelliJ IDEA.
  * User: ilies

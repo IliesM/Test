@@ -16,7 +16,7 @@
           "Logger\\": "src/Logger",
           "RMQClient\\": "src/RMQClient",
           "Worker\\": "src/Worker",
-	  "Helpers\\": "src/Helpers"
+	      "Helpers\\": "src/Helpers"
         }
     },
     "authors": [
