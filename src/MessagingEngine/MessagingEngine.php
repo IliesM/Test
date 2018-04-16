@@ -76,7 +76,7 @@ class MessagingEngine
 
             $pool->collect(function (MyWorker $workers) {
                foreach ($workers as $worker) {
-                   
+
                    $this->_sender->send("ok");
                }
             });
