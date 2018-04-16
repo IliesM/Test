@@ -6,41 +6,36 @@
  * Time: 16:45
  */
 
-namespace Worker;
+namespace Task;
 
-use EventHandler\ResponseState;
-use Helpers\ResponseHelper;
 use Logger\Logger;
-use RMQClient\RMQSender;
 
-class MyWorker extends \Worker
+class Task extends \Worker
 {
     private $_timeToWait;
-    private $_sender;
     private $_logger;
-    private $_complete;
     private $_success;
 
     /**
      * Task constructor.
-     * @param RMQSender $sender
      * @param Logger $logger
      */
     public function __construct(Logger $logger)
     {
         $this->_timeToWait = mt_rand(1, 10);
         $this->_logger = $logger;
-        $this->_complete = false;
     }
 
+    /**
+     * Run Instagram's Api call
+     */
     public function run()
     {
         try {
 
             if (isset($this->_timeToWait)) {
 
-                sleep($this->_timeToWait);
-                $this->_complete = true;
+                sleep($this->_timeToWait * 50);
                 $this->_success = true;
 
             }
@@ -48,16 +43,15 @@ class MyWorker extends \Worker
         } catch (\Exception $e) {
 
             $this->_logger->error(sprintf("An error occurred while requesting InstagramApi : %s", $e->getMessage()));
-            echo "An error occurred while requesting InstagramApi".PHP_EOL;
             $this->_success = false;
             //TODO Disconnect the account
         }
     }
 
-    public function isComplete() {
-        return $this->_complete;
-    }
-
+    /**
+     * Return thread final state
+     * @return mixed
+     */
     public function isSuccess()
     {
         return $this->_success;

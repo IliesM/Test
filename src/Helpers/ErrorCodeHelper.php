@@ -8,7 +8,11 @@
 
 namespace Helpers;
 
-
+/***
+ * Regroups all of the error codes of the application
+ * Class ErrorCodeHelper
+ * @package Helpers
+ */
 class ErrorCodeHelper
 {
     const BAD_INITIALIZATION = ['code' => 1000, 'message' => 'Accounts/Messages/Users are not well initialized'];

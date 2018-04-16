@@ -54,6 +54,9 @@ class RMQSender
         $this->initSender();
     }
 
+    /**
+     * Initialize RMQSender
+     */
     private function initSender()
     {
         try {
@@ -70,6 +73,9 @@ class RMQSender
         }
     }
 
+    /**
+     * Send data to C# application
+     */
     public function send($data)
     {
         try {
@@ -82,9 +88,13 @@ class RMQSender
             $error = ErrorCodeHelper::ERROR_SENDING;
             $this->_logger->error(sprintf($error['message'], $this->_queue, $e->getMessage()));
             sprintf($error['message'], $this->_queue, $e->getMessage());
+            $this->close();
         }
     }
 
+    /**
+     * Close channel and connection of the RMQSender
+     */
     public function close()
     {
         $this->_channel->close();

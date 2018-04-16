@@ -28,6 +28,9 @@ class Configuration
         $this->_configPath = $_configPath;
     }
 
+    /**
+     * Load configuration from the Config/config.json file
+     */
     public function loadConfiguration()
     {
         if ((isset($this->_configPath)) && (file_exists($this->_configPath))) {
@@ -37,6 +40,7 @@ class Configuration
     }
 
     /**
+     * Return the whole config
      * @return mixed
      */
     public function getConfig()

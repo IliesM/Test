@@ -55,6 +55,9 @@ class RMQReceiver
         $this->initSender();
     }
 
+    /**
+     * Initialize RMQReceiver
+     */
     private function initSender()
     {
        try {
@@ -71,6 +74,9 @@ class RMQReceiver
        }
     }
 
+    /**
+     * Receive and parse data from C# application
+     */
     public function receive()
     {
         try {
@@ -93,9 +99,13 @@ class RMQReceiver
             $error = ErrorCodeHelper::ERROR_RETRIEVING;
             $this->_logger->error(sprintf($error['message'], $this->_queue, $e->getMessage()));
             sprintf($error['message'], $this->_queue, $e->getMessage());
+            $this->close();
         }
     }
 
+    /**
+     * Close channel and connection of the RMQReceiver
+     */
     public function close()
     {
         $this->_channel->close();

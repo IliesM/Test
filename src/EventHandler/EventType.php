@@ -11,6 +11,11 @@ namespace EventHandler;
 
 class EventType
 {
+    /**
+     * Return the event's function
+     * @param $eventType
+     * @return mixed
+     */
     static function getEvent($eventType)
     {
         $events = [

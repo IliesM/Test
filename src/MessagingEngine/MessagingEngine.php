@@ -10,12 +10,11 @@ namespace MessagingEngine;
 
 use Configuration\Configuration;
 use EventHandler\ResponseState;
-use function GuzzleHttp\Promise\task;
 use Helpers\ErrorCodeHelper;
 use Helpers\ResponseHelper;
-use Pool;
+use Logger\Logger;
 use RMQClient\RMQSender;
-use Worker\MyWorker;
+use Task\Task;
 
 class MessagingEngine
 {
@@ -23,9 +22,17 @@ class MessagingEngine
     private $_userAccounts;
     private $_eyesAccounts;
     private $_eyesMessages;
-    private $_taskQueue;
+    /**
+     * @var Logger
+     */
     private $_logger;
+    /**
+     * @var Task[]
+     */
     private $_workers;
+    /**
+     * @var RMQSender
+     */
     private $_sender;
 
     /**
@@ -39,10 +46,12 @@ class MessagingEngine
         $this->_eyesMessages = null;
         $this->_logger = $GLOBALS['logger'];
         $this->_sender = new RMQSender($configuration);
-        $GLOBALS['sender'] = $this->_sender;
         $this->_workers = [];
     }
 
+    /**
+     * Load needed data received from C# application
+     */
     public function loadData()
     {
         $this->_userAccounts = ((isset($GLOBALS['userAccounts']))) ? $GLOBALS['userAccounts']: null;
@@ -50,6 +59,9 @@ class MessagingEngine
         $this->_eyesMessages = ((isset($GLOBALS['eyesMessages']))) ? $GLOBALS['eyesMessages']: null;
     }
 
+    /**
+     * Load, prepare and process tasks in threads
+     */
     public function startMessaging()
     {
         $this->loadData();
@@ -57,12 +69,11 @@ class MessagingEngine
         if ($this->_userAccounts && $this->_eyesAccounts && $this->_eyesMessages) {
 
             $tasks = $this->prepareTasks();
-
             //TODO Login
             foreach (range(1, (count($tasks) - 9)) as $i) {
 
                 if (!$GLOBALS['isStopped']) {
-                    $_workers[$i] = new MyWorker($this->_logger);
+                    $_workers[$i] = new Task($this->_logger);
                     $_workers[$i]->start();
 
                     $response = ResponseHelper::createTaskResponse(ResponseState::Running, $tasks[$i]);
@@ -92,6 +103,10 @@ class MessagingEngine
         }
     }
 
+    /**
+     * Prepare tasks with all needed data
+     * @return array
+     */
     private function prepareTasks()
     {
         $preparedTasks = [];
@@ -110,6 +125,13 @@ class MessagingEngine
         return $preparedTasks;
     }
 
+    /**
+     * Prepare selected message with right account and user
+     * @param $account
+     * @param $user
+     * @param $message
+     * @return mixed
+     */
     private function prepareMessage($account, $user, $message)
     {
         $fieldsToReplace = [
@@ -128,6 +150,11 @@ class MessagingEngine
         return $preparedMessage;
     }
 
+    /**
+     * Get message by the sex of the receiver
+     * @param $sex
+     * @return mixed
+     */
     private function getMessageBySex($sex)
     {
         $foundMessages = [];
@@ -142,6 +169,11 @@ class MessagingEngine
         return $foundMessages[mt_rand(0, 4)];
     }
 
+    /**
+     * Get eyes account by user sex
+     * @param $sex
+     * @return null
+     */
     private function getEyesAccountBySex($sex)
     {
         $foundAccount = null;

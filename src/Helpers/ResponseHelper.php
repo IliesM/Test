@@ -11,6 +11,12 @@ namespace Helpers;
 
 class ResponseHelper
 {
+    /**
+     * Create a response with task state and related task in payload
+     * @param $state
+     * @param $payload
+     * @return string
+     */
     public static function createTaskResponse($state, $payload)
     {
         $response = [];
@@ -23,6 +29,12 @@ class ResponseHelper
         return json_encode($response);
     }
 
+    /**
+     * Create a error response with the error's message and code
+     * @param $error
+     * @param null $payload
+     * @return string
+     */
     public static function createErrorResponse($error, $payload = null)
     {
         $response = [];

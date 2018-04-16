@@ -11,6 +11,10 @@ namespace EventHandler;
 class EventHandler
 {
 
+    /**
+     * Parse event and execute the right function
+     * @param $payload
+     */
     public static function parseEvent($payload)
     {
         $event = json_decode($payload, true);
@@ -23,24 +27,37 @@ class EventHandler
         }
     }
 
+    /**
+     * Load eyes accounts
+     * @param $data
+     */
     public function loadEyesAccounts($data)
     {
         $GLOBALS['eyesAccounts'] = $data['accounts'];
-        //var_dump($GLOBALS['eyesAccounts']);
     }
 
+    /**
+     * Load user accounts
+     * @param $data
+     */
     public function loadUserAccounts($data)
     {
         $GLOBALS['userAccounts'] = $data['accounts'];
-        //var_dump($GLOBALS['userAccounts']);
     }
 
+    /**
+     * Load eyes messages
+     * @param $data
+     */
     public function loadEyesMessages($data)
     {
         $GLOBALS['eyesMessages'] = $data['messages'];
-        //var_dump($GLOBALS['eyesMessages']);
     }
 
+    /**
+     * Fire Start event that launch StartMessaging()
+     * @param $data
+     */
     public function start($data)
     {
         $GLOBALS['isStopped'] = false;
