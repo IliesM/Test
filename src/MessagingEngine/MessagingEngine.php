@@ -56,7 +56,7 @@ class MessagingEngine
 
             $tasks = $this->prepareTasks();
 
-            foreach (range(0, (count($tasks) - 1)) as $i) {
+            foreach (range(0, (count($tasks) - 9)) as $i) {
 
                 if (!$GLOBALS['isStopped']) {
                     $_workers[$i] = new MyWorker($this->_logger);
@@ -64,10 +64,11 @@ class MessagingEngine
                 }
             }
 
-            foreach (range(0,  (count($tasks) - 1)) as $i) {
+            foreach (range(0,  (count($tasks) - 9)) as $i) {
 
                 if (!$GLOBALS['isStopped']) {
                     $_workers[$i]->join();
+                    var_dump($_workers[$i]->isSuccess());
                     $response = ResponseHelper::createResponse(ResponseState::Success, "");
                     $this->_sender->send($response);
                 }

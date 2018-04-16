@@ -50,11 +50,16 @@ class MyWorker extends \Worker
             $this->_logger->error(sprintf("An error occurred while requesting InstagramApi : %s", $e->getMessage()));
             echo "An error occurred while requesting InstagramApi".PHP_EOL;
             $this->_success = false;
-            //$this->kill();
+            //TODO Disconnect the account
         }
     }
 
     public function isComplete() {
         return $this->_complete;
+    }
+
+    public function isSuccess()
+    {
+        return $this->_success;
     }
 }
