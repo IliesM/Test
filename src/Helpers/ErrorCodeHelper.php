@@ -19,4 +19,5 @@ class ErrorCodeHelper
     const ERROR_RETRIEVING = ['code' => 1001, 'message' => 'Failed at retrieving message from queue %s : %s'];
     const ERROR_SENDING = ['code' => 1002, 'message' => 'Failed at sending message to queue %s'];
     const CONNECTION_ERROR = ['code' => 1003, 'message' => 'Error while connecting AMPQ client : %s'];
+    const CONFIG_FILE_NOT_FOUND = ['code' => 1004, 'message' => 'Config/config.json file not found'];
 }

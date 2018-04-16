@@ -15,7 +15,7 @@
           "EventHandler\\": "src/EventHandler",
           "Logger\\": "src/Logger",
           "RMQClient\\": "src/RMQClient",
-          "Worker\\": "src/Worker",
+          "Task\\": "src/Task",
 	      "Helpers\\": "src/Helpers"
         }
     },

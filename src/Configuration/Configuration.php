@@ -8,6 +8,8 @@
 
 namespace Configuration;
 
+use Helpers\ErrorCodeHelper;
+
 class Configuration
 {
     /**
@@ -30,6 +32,7 @@ class Configuration
 
     /**
      * Load configuration from the Config/config.json file
+     * @throws \Exception
      */
     public function loadConfiguration()
     {
@@ -37,6 +40,8 @@ class Configuration
             $this->_loadedConfig = file_get_contents($this->_configPath);
             $this->_loadedConfig = json_decode($this->_loadedConfig, true);
         }
+        else
+            throw new \Exception(ErrorCodeHelper::CONFIG_FILE_NOT_FOUND['message']);
     }
 
     /**

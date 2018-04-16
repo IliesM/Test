@@ -26,8 +26,6 @@ $GLOBALS['isStopped'] = false;
 
 $GLOBALS['messagingEngine'] = new MessagingEngine($config);
 
-$sender = new RMQSender($config);
 $receiver = new RMQReceiver($config);
 
-//$sender->send();
 $receiver->receive();
