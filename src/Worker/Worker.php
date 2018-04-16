@@ -38,12 +38,8 @@ class Worker extends Thread
 
             if (isset($this->_timeToWait)) {
 
-                $this->synchronized(function ($thread) {
-
-                }, $this);
-
                 sleep($this->_timeToWait);
-                $this->notify();
+                $this->_sender->send("ok");
             }
 
         } catch (\Exception $e) {
