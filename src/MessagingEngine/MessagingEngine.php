@@ -75,13 +75,18 @@ class MessagingEngine
             }
 
             $pool->collect(function ($workers) {
-               foreach ($workers as $worker) {
+
+                foreach ($workers as $worker) {
 
                    $this->_sender->send("ok");
+                   $status[] = $worker->isComplete();
                }
+
+               return $status;
             });
 
-            $pool->shutdown();
+            var_dump($pool);
+            //$pool->shutdown();
 //            $pool->collect(function($checkingTask){
 //                echo $checkingTask->val;
 //                return $checkingTask->isGarbage();
