@@ -76,11 +76,8 @@ class MessagingEngine
                     $_workers[$i]->join();
                     $isSuccess = $_workers[$i]->isSuccess();
 
-                    if ($isSuccess)
-                        $response = ResponseHelper::createResponse(ResponseState::Success, "");
-                    else
-                        $response = ResponseHelper::createResponse(ResponseState::Failure, "");
-
+                    $state = ($isSuccess) ? ResponseState::Success : ResponseState::Failure;
+                    $response = ResponseHelper::createResponse($state, $tasks[$i]);
                     $this->_sender->send($response);
                 }
             }
