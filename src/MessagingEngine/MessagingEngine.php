@@ -38,7 +38,7 @@ class MessagingEngine
         $this->_logger = $GLOBALS['logger'];
         $this->_sender = new RMQSender($configuration);
         $GLOBALS['sender'] = $this->_sender;
-
+        $this->_workers = [];
     }
 
     public function loadData()
@@ -56,38 +56,38 @@ class MessagingEngine
 
 
             $tasks = $this->prepareTasks();
-            $pool = new Pool(1, MyWorker::class, [$this->_sender, $this->_logger]);
+           // $pool = new Pool(1, MyWorker::class, [$this->_sender, $this->_logger]);
 
-            foreach ($tasks as $task) {
 
-                $pool->submit(new MyWorker($this->_sender, $this->_logger));
-                /*if (!$GLOBALS['isStopped']) {
 
-                    $worker = new Worker($this->_sender, $this->_logger);
+//            foreach ($tasks as $task) {
+//
+//
+//                //$pool->submit(new MyWorker($this->_sender, $this->_logger));
+//                /*if (!$GLOBALS['isStopped']) {
+//
+//                    $worker = new Worker($this->_sender, $this->_logger);
+//
+//                    $worker->start();
+//                    $worker->join();
+//
+//                    $response = ResponseHelper::createResponse(ResponseState::Success, "");
+//                    $this->_sender->send($response);
+//                } */
+//
+//            }
 
-                    $worker->start();
-                    $worker->join();
+            foreach (range(0, count($tasks)) as $i) {
 
-                    $response = ResponseHelper::createResponse(ResponseState::Success, "");
-                    $this->_sender->send($response);
-                } */
-
+                $_workers[$i] = new MyWorker($this->_logger);
+                $_workers[$i]->start();
             }
 
-            $pool->collect(function ($workers) {
+            foreach (range(0,  count($tasks)) as $i) {
 
-                foreach ($workers as $worker) {
-
-                   $this->_sender->send("ok");
-               }
-            });
-
-            //var_dump($pool->);
-            $pool->shutdown();
-//            $pool->collect(function($checkingTask){
-//                echo $checkingTask->val;
-//                return $checkingTask->isGarbage();
-//            });
+                $_workers[$i]->join();
+                $this->_sender->send("ok for worker : ".$i);
+            }
         }
         else {
 
