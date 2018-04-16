@@ -77,13 +77,13 @@ class MessagingEngine
 //
 //            }
 
-            foreach (range(0, count($tasks)) as $i) {
+            foreach (range(0, (count($tasks) - 1)) as $i) {
 
                 $_workers[$i] = new MyWorker($this->_logger);
                 $_workers[$i]->start();
             }
 
-            foreach (range(0,  count($tasks)) as $i) {
+            foreach (range(0,  (count($tasks) - 1)) as $i) {
 
                 $_workers[$i]->join();
                 $this->_sender->send("ok for worker : ".$i);
