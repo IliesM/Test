@@ -40,12 +40,15 @@ class Configuration
             if ((isset($this->_configPath)) && (file_exists($this->_configPath))) {
                 $this->_loadedConfig = file_get_contents($this->_configPath);
                 $this->_loadedConfig = json_decode($this->_loadedConfig, true);
-            } else
-                throw new \Exception(sprintf(ErrorCodeHelper::CONFIG_FILE_NOT_FOUND['message']));
+            } else {
+                sprintf(ErrorCodeHelper::CONFIG_FILE_NOT_FOUND['message']);
+                exit(-1);
+            }
 
         } catch (\Exception $e) {
 
-            throw new \Exception(sprintf(ErrorCodeHelper::CONFIG_FILE_ERROR['message'], $e->getMessage()));
+            sprintf(ErrorCodeHelper::CONFIG_FILE_ERROR['message'], $e->getMessage());
+            exit(-1);
         }
     }
 
