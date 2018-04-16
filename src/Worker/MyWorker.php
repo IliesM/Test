@@ -37,7 +37,7 @@ class MyWorker extends \Worker
     {
         try {
 
-            throw new $e;
+            throw new \Exception();
             if (isset($this->_timeToWait)) {
 
                 sleep($this->_timeToWait);
