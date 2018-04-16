@@ -41,7 +41,7 @@ class MyWorker extends \Worker
             if (isset($this->_timeToWait)) {
 
                 sleep($this->_timeToWait);
-                $this->_sender->send("ok");
+                //$this->_sender->send("ok");
                 $this->_complete = true;
             }
 
