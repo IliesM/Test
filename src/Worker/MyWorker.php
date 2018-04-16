@@ -27,7 +27,7 @@ class MyWorker extends \Worker
      */
     public function __construct(Logger $logger)
     {
-        $this->_timeToWait = 2/*mt_rand(1, 10)*/;
+        $this->_timeToWait = mt_rand(1, 10);
         $this->_logger = $logger;
         $this->_complete = false;
     }
