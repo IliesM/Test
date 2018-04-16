@@ -11,6 +11,7 @@ namespace RMQClient;
 
 use Configuration\Configuration;
 use EventHandler\EventHandler;
+use Helpers\ErrorCodeHelper;
 use Logger\Logger;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
@@ -56,8 +57,18 @@ class RMQReceiver
 
     private function initSender()
     {
-        $this->_connection = new AMQPStreamConnection($this->_host, $this->_port, $this->_user, $this->_password);
-        $this->_channel = $this->_connection->channel();
+       try {
+
+           $this->_connection = new AMQPStreamConnection($this->_host, $this->_port, $this->_user, $this->_password);
+           $this->_channel = $this->_connection->channel();
+
+       } catch (\Exception $e) {
+
+           $error = ErrorCodeHelper::CONNECTION_ERROR;
+           $this->_logger->error(sprintf($error['message'], $this->_queue, $e->getMessage()));
+           sprintf($error['message'], $this->_queue, $e->getMessage());
+           exit(-1);
+       }
     }
 
     public function receive()
@@ -79,8 +90,9 @@ class RMQReceiver
 
         } catch (\Exception $e) {
 
-            $this->_logger->error(sprintf("Failed at retrieving message from queue %s : %s", $this->_queue, $e->getMessage()));
-            throw new $e;
+            $error = ErrorCodeHelper::ERROR_RETRIEVING;
+            $this->_logger->error(sprintf($error['message'], $this->_queue, $e->getMessage()));
+            sprintf($error['message'], $this->_queue, $e->getMessage());
         }
     }
 

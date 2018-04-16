@@ -11,7 +11,7 @@ namespace Helpers;
 
 class ResponseHelper
 {
-    public static function createResponse($state, $payload)
+    public static function createTaskResponse($state, $payload)
     {
         $response = [];
 
@@ -19,6 +19,17 @@ class ResponseHelper
         $response["data"]['user'] = $payload['UserID'];
         $response["data"]['message'] = $payload['message'];
         $response["data"]['eyesAccount'] = $payload['eyesAccount'];
+
+        return json_encode($response);
+    }
+
+    public static function createErrorResponse($error, $payload = null)
+    {
+        $response = [];
+
+        $response["errorCode"] = $error['code'];
+        $response["errorMsg"] = $error['message'];
+        $response["data"] = $payload;
 
         return json_encode($response);
     }

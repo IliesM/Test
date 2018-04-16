@@ -11,6 +11,7 @@ namespace MessagingEngine;
 use Configuration\Configuration;
 use EventHandler\ResponseState;
 use function GuzzleHttp\Promise\task;
+use Helpers\ErrorCodeHelper;
 use Helpers\ResponseHelper;
 use Pool;
 use RMQClient\RMQSender;
@@ -64,7 +65,7 @@ class MessagingEngine
                     $_workers[$i] = new MyWorker($this->_logger);
                     $_workers[$i]->start();
 
-                    $response = ResponseHelper::createResponse(ResponseState::Running, $tasks[$i]);
+                    $response = ResponseHelper::createTaskResponse(ResponseState::Running, $tasks[$i]);
                     $this->_sender->send($response);
                 }
             }
@@ -77,7 +78,7 @@ class MessagingEngine
                     $isSuccess = $_workers[$i]->isSuccess();
 
                     $state = ($isSuccess) ? ResponseState::Success : ResponseState::Failure;
-                    $response = ResponseHelper::createResponse($state, $tasks[$i]);
+                    $response = ResponseHelper::createTaskResponse($state, $tasks[$i]);
                     $this->_sender->send($response);
                 }
             }
@@ -85,8 +86,9 @@ class MessagingEngine
         }
         else {
 
-            $this->_logger->error("Accounts/Messages/Users are not initialized");
-            echo 'Accounts/Messages/Users are not initialized'.PHP_EOL;
+            $error = ErrorCodeHelper::BAD_INITIALIZATION;
+            $this->_logger->error($error['message']);
+            ResponseHelper::createErrorResponse($error);
         }
     }
 
