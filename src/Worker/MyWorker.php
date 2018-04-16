@@ -19,6 +19,7 @@ class MyWorker extends \Worker
     private $_sender;
     private $_logger;
     private $_complete;
+    private $_success;
 
     /**
      * Task constructor.
@@ -40,14 +41,17 @@ class MyWorker extends \Worker
 //
 //                sleep($this->_timeToWait);
 //                $this->_complete = true;
+                  // $this->_success = true;
+
 //            }
             throw new \Exception();
 
         } catch (\Exception $e) {
 
             $this->_logger->error(sprintf("An error occurred while requesting InstagramApi : %s", $e->getMessage()));
-
-            $this->kill();
+            echo "An error occurred while requesting InstagramApi".PHP_EOL;
+            $this->_success = false;
+            //$this->kill();
         }
     }
 
