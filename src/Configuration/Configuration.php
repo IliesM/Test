@@ -41,11 +41,11 @@ class Configuration
                 $this->_loadedConfig = file_get_contents($this->_configPath);
                 $this->_loadedConfig = json_decode($this->_loadedConfig, true);
             } else
-                throw new \Exception(ErrorCodeHelper::CONFIG_FILE_NOT_FOUND['message']);
+                throw new \Exception(sprintf(ErrorCodeHelper::CONFIG_FILE_NOT_FOUND['message']));
 
         } catch (\Exception $e) {
 
-            throw new \Exception(ErrorCodeHelper::CONFIG_FILE_ERROR['message']);
+            throw new \Exception(sprintf(ErrorCodeHelper::CONFIG_FILE_ERROR['message'], $e->getMessage()));
         }
     }
 
