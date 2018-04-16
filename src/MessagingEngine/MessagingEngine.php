@@ -54,28 +54,7 @@ class MessagingEngine
 
         if ($this->_userAccounts && $this->_eyesAccounts && $this->_eyesMessages) {
 
-
             $tasks = $this->prepareTasks();
-           // $pool = new Pool(1, MyWorker::class, [$this->_sender, $this->_logger]);
-
-
-
-//            foreach ($tasks as $task) {
-//
-//
-//                //$pool->submit(new MyWorker($this->_sender, $this->_logger));
-//                /*if (!$GLOBALS['isStopped']) {
-//
-//                    $worker = new Worker($this->_sender, $this->_logger);
-//
-//                    $worker->start();
-//                    $worker->join();
-//
-//
-//                    $this->_sender->send($response);
-//                } */
-//
-//            }
 
             foreach (range(0, (count($tasks) - 1)) as $i) {
 
@@ -97,7 +76,7 @@ class MessagingEngine
         else {
 
             $this->_logger->error("Accounts/Messages/Users are not initialized");
-            die;
+            echo 'Accounts/Messages/Users are not initialized'.PHP_EOL;
         }
     }
 

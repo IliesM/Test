@@ -36,11 +36,12 @@ class MyWorker extends \Worker
     {
         try {
 
-            if (isset($this->_timeToWait)) {
-
-                sleep($this->_timeToWait);
-                $this->_complete = true;
-            }
+//            if (isset($this->_timeToWait)) {
+//
+//                sleep($this->_timeToWait);
+//                $this->_complete = true;
+//            }
+            throw new \Exception();
 
         } catch (\Exception $e) {
 
