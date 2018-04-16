@@ -11,6 +11,7 @@ namespace MessagingEngine;
 use Configuration\Configuration;
 use EventHandler\ResponseState;
 use Helpers\ResponseHelper;
+use Pool;
 use RMQClient\RMQSender;
 use Worker\Worker;
 
@@ -54,9 +55,12 @@ class MessagingEngine
 
 
             $tasks = $this->prepareTasks();
+            $pool = new Pool(5, Worker::class);
+
             foreach ($tasks as $task) {
 
-                if (!$GLOBALS['isStopped']) {
+                $pool->submit(new Worker($this->_sender, $this->_logger));
+                /*if (!$GLOBALS['isStopped']) {
 
                     $worker = new Worker($this->_sender, $this->_logger);
 
@@ -65,8 +69,14 @@ class MessagingEngine
 
                     $response = ResponseHelper::createResponse(ResponseState::Success, "");
                     $this->_sender->send($response);
-                }
+                } */
             }
+
+            $pool->shutdown();
+//            $pool->collect(function($checkingTask){
+//                echo $checkingTask->val;
+//                return $checkingTask->isGarbage();
+//            });
         }
         else {
 
