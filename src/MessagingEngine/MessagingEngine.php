@@ -71,7 +71,7 @@ class MessagingEngine
 //                    $worker->start();
 //                    $worker->join();
 //
-//                    $response = ResponseHelper::createResponse(ResponseState::Success, "");
+//
 //                    $this->_sender->send($response);
 //                } */
 //
@@ -79,14 +79,19 @@ class MessagingEngine
 
             foreach (range(0, (count($tasks) - 1)) as $i) {
 
-                $_workers[$i] = new MyWorker($this->_logger);
-                $_workers[$i]->start();
+                if (!$GLOBALS['isStopped']) {
+                    $_workers[$i] = new MyWorker($this->_logger);
+                    $_workers[$i]->start();
+                }
             }
 
             foreach (range(0,  (count($tasks) - 1)) as $i) {
 
-                $_workers[$i]->join();
-                $this->_sender->send("ok for worker : ".$i);
+                if (!$GLOBALS['isStopped']) {
+                    $_workers[$i]->join();
+                    $response = ResponseHelper::createResponse(ResponseState::Success, "");
+                    $this->_sender->send($response);
+                }
             }
         }
         else {
