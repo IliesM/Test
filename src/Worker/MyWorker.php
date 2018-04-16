@@ -12,7 +12,6 @@ use EventHandler\ResponseState;
 use Helpers\ResponseHelper;
 use Logger\Logger;
 use RMQClient\RMQSender;
-use Thread;
 
 class MyWorker extends \Worker
 {
@@ -26,11 +25,11 @@ class MyWorker extends \Worker
      * @param RMQSender $sender
      * @param Logger $logger
      */
-    public function __construct(/*RMQSender $sender, Logger $logger*/)
+    public function __construct(RMQSender $sender, Logger $logger)
     {
         $this->_timeToWait = 2/*mt_rand(1, 10)*/;
-//        $this->_sender = $sender;
-//        $this->_logger = $logger;
+        $this->_sender = $sender;
+        $this->_logger = $logger;
         $this->_complete = false;
     }
 
@@ -41,7 +40,7 @@ class MyWorker extends \Worker
             if (isset($this->_timeToWait)) {
 
                 sleep($this->_timeToWait);
-                //$this->_sender->send("ok");
+                $this->_sender->send("ok");
                 $this->_complete = true;
             }
 

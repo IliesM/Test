@@ -59,7 +59,7 @@ class MessagingEngine
 
             foreach ($tasks as $task) {
 
-                $pool->submit(new MyWorker(/*$this->_sender, $this->_logger*/));
+                $pool->submit(new MyWorker($this->_sender, $this->_logger));
                 /*if (!$GLOBALS['isStopped']) {
 
                     $worker = new Worker($this->_sender, $this->_logger);
