@@ -41,7 +41,7 @@ class Configuration
                 $this->_loadedConfig = file_get_contents($this->_configPath);
                 $this->_loadedConfig = json_decode($this->_loadedConfig, true);
 
-                if (json_last_error_msg() != '') {
+                if (json_last_error_msg() != 'No error') {
 
                     throw new \Exception(sprintf(ErrorCodeHelper::CONFIG_FILE_ERROR['message'], json_last_error_msg()));
                 }
