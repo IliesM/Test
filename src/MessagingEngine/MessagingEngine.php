@@ -37,6 +37,7 @@ class MessagingEngine
         $this->_eyesMessages = null;
         $this->_logger = $GLOBALS['logger'];
         $this->_sender = new RMQSender($configuration);
+        $GLOBALS['sender'] = $this->_sender;
 
     }
 

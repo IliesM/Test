@@ -28,7 +28,7 @@ class MyWorker extends \Worker
     public function __construct(RMQSender $sender, Logger $logger)
     {
         $this->_timeToWait = 2/*mt_rand(1, 10)*/;
-        $this->_sender = $sender;
+        $this->_sender = $GLOBALS['sender'];
         $this->_logger = $logger;
         $this->_complete = false;
     }
