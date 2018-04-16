@@ -79,14 +79,11 @@ class MessagingEngine
                 foreach ($workers as $worker) {
 
                    $this->_sender->send("ok");
-                   $status[] = $worker->isComplete();
                }
-
-               return $status;
             });
 
-            var_dump($pool);
-            //$pool->shutdown();
+            //var_dump($pool->);
+            $pool->shutdown();
 //            $pool->collect(function($checkingTask){
 //                echo $checkingTask->val;
 //                return $checkingTask->isGarbage();
