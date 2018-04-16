@@ -10,6 +10,7 @@ namespace MessagingEngine;
 
 use Configuration\Configuration;
 use EventHandler\ResponseState;
+use function GuzzleHttp\Promise\task;
 use Helpers\ResponseHelper;
 use Pool;
 use RMQClient\RMQSender;
@@ -56,11 +57,16 @@ class MessagingEngine
 
             $tasks = $this->prepareTasks();
 
+            //TODO Login
             foreach (range(1, (count($tasks) - 9)) as $i) {
 
                 if (!$GLOBALS['isStopped']) {
                     $_workers[$i] = new MyWorker($this->_logger);
                     $_workers[$i]->start();
+
+                    var_dump($tasks[$i]);
+                    /*$response = ResponseHelper::createResponse(ResponseState::Running, [$tasks[$i]['user'] => ]);
+                    $this->_sender->send($response);*/
                 }
             }
 
@@ -79,6 +85,7 @@ class MessagingEngine
                     $this->_sender->send($response);
                 }
             }
+            //TODO Logout
         }
         else {
 
