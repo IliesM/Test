@@ -56,7 +56,7 @@ class MessagingEngine
 
 
             $tasks = $this->prepareTasks();
-            $pool = new Pool(5, MyWorker::class, [$this->_sender, $this->_logger]);
+            $pool = new Pool(1, MyWorker::class, [$this->_sender, $this->_logger]);
 
             foreach ($tasks as $task) {
 
