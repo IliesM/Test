@@ -71,7 +71,15 @@ class MessagingEngine
                     $response = ResponseHelper::createResponse(ResponseState::Success, "");
                     $this->_sender->send($response);
                 } */
+
             }
+
+            $pool->collect(function (MyWorker $workers) {
+               foreach ($workers as $worker) {
+                   
+                   $this->_sender->send("ok");
+               }
+            });
 
             $pool->shutdown();
 //            $pool->collect(function($checkingTask){
