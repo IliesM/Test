@@ -13,7 +13,7 @@ use EventHandler\ResponseState;
 use Helpers\ResponseHelper;
 use Pool;
 use RMQClient\RMQSender;
-use Worker\Worker;
+use Worker\MyWorker;
 
 class MessagingEngine
 {
@@ -55,11 +55,11 @@ class MessagingEngine
 
 
             $tasks = $this->prepareTasks();
-            $pool = new Pool(5, Worker::class);
+            $pool = new Pool(5, MyWorker::class);
 
             foreach ($tasks as $task) {
 
-                $pool->submit(new Worker($this->_sender, $this->_logger));
+                $pool->submit(new MyWorker(/*$this->_sender, $this->_logger*/));
                 /*if (!$GLOBALS['isStopped']) {
 
                     $worker = new Worker($this->_sender, $this->_logger);

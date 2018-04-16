@@ -14,22 +14,24 @@ use Logger\Logger;
 use RMQClient\RMQSender;
 use Thread;
 
-class Worker extends Thread
+class MyWorker extends \Worker
 {
     private $_timeToWait;
     private $_sender;
     private $_logger;
+    private $_complete;
 
     /**
-     * Worker constructor.
+     * Task constructor.
      * @param RMQSender $sender
      * @param Logger $logger
      */
-    public function __construct(RMQSender $sender, Logger $logger)
+    public function __construct(/*RMQSender $sender, Logger $logger*/)
     {
         $this->_timeToWait = 2/*mt_rand(1, 10)*/;
-        $this->_sender = $sender;
-        $this->_logger = $logger;
+//        $this->_sender = $sender;
+//        $this->_logger = $logger;
+        $this->_complete = false;
     }
 
     public function run()
@@ -40,6 +42,7 @@ class Worker extends Thread
 
                 sleep($this->_timeToWait);
                 $this->_sender->send("ok");
+                $this->_complete = true;
             }
 
         } catch (\Exception $e) {
@@ -48,5 +51,9 @@ class Worker extends Thread
 
             $this->kill();
         }
+    }
+
+    public function isComplete() {
+        return $this->_complete;
     }
 }
