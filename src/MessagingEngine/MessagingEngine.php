@@ -64,9 +64,8 @@ class MessagingEngine
                     $_workers[$i] = new MyWorker($this->_logger);
                     $_workers[$i]->start();
 
-                    var_dump($tasks[$i]);
-                    /*$response = ResponseHelper::createResponse(ResponseState::Running, [$tasks[$i]['user'] => ]);
-                    $this->_sender->send($response);*/
+                    $response = ResponseHelper::createResponse(ResponseState::Running, $tasks[$i]);
+                    $this->_sender->send($response);
                 }
             }
 

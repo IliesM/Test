@@ -16,8 +16,11 @@ class ResponseHelper
         $response = [];
 
         $response["state"] = $state;
-        $response["data"] = $payload;
+        $response["data"]['user'] = $payload['UserID'];
+        $response["data"]['message'] = $payload['message'];
+        $response["data"]['eyesAccount'] = $payload['message'];
 
+        var_dump($response);
         return json_encode($response);
     }
 }
