@@ -36,12 +36,17 @@ class Configuration
      */
     public function loadConfiguration()
     {
-        if ((isset($this->_configPath)) && (file_exists($this->_configPath))) {
-            $this->_loadedConfig = file_get_contents($this->_configPath);
-            $this->_loadedConfig = json_decode($this->_loadedConfig, true);
+        try {
+            if ((isset($this->_configPath)) && (file_exists($this->_configPath))) {
+                $this->_loadedConfig = file_get_contents($this->_configPath);
+                $this->_loadedConfig = json_decode($this->_loadedConfig, true);
+            } else
+                throw new \Exception(ErrorCodeHelper::CONFIG_FILE_NOT_FOUND['message']);
+
+        } catch (\Exception $e) {
+
+            throw new \Exception(ErrorCodeHelper::CONFIG_FILE_ERROR['message']);
         }
-        else
-            throw new \Exception(ErrorCodeHelper::CONFIG_FILE_NOT_FOUND['message']);
     }
 
     /**
