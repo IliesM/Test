@@ -8,22 +8,27 @@
 
 namespace Task;
 
+use InstagramAPI\Instagram;
 use Logger\Logger;
 
-class Task extends \Worker
+class Task extends \Thread
 {
     private $_timeToWait;
     private $_logger;
     private $_success;
+    private $_task;
 
     /**
      * Task constructor.
      * @param Logger $logger
+     * @param $task
      */
-    public function __construct(Logger $logger)
+    public function __construct(Logger $logger, $task)
     {
-        $this->_timeToWait = mt_rand(1, 10);
+        $this->_timeToWait = 0;
+        //$this->_timeToWait = mt_rand(900, 1200);
         $this->_logger = $logger;
+        $this->_task = $task;
     }
 
     /**
@@ -35,9 +40,11 @@ class Task extends \Worker
 
             if (isset($this->_timeToWait)) {
 
-                sleep($this->_timeToWait * 50);
-                $this->_success = true;
+                $task = json_encode($this->_task);
 
+                //sleep($this->_timeToWait);
+                system('php instadm.php '."'".$task."'");
+                $this->_success = true;
             }
 
         } catch (\Exception $e) {

@@ -12,7 +12,9 @@ use Configuration\Configuration;
 use EventHandler\ResponseState;
 use Helpers\ErrorCodeHelper;
 use Helpers\ResponseHelper;
+use InstagramAPI\Instagram;
 use Logger\Logger;
+use function MongoDB\BSON\toJSON;
 use RMQClient\RMQSender;
 use Task\Task;
 
@@ -45,7 +47,7 @@ class MessagingEngine
         $this->_eyesAccounts = null;
         $this->_eyesMessages = null;
         $this->_logger = $GLOBALS['logger'];
-        $this->_sender = new RMQSender($configuration);
+        //$this->_sender = new RMQSender($configuration);
         $this->_workers = [];
     }
 
@@ -70,27 +72,30 @@ class MessagingEngine
 
             $tasks = $this->prepareTasks();
             //TODO Login
-            foreach (range(1, (count($tasks) - 9)) as $i) {
+            foreach ($tasks as $task) {
 
                 if (!$GLOBALS['isStopped']) {
-                    $_workers[$i] = new Task($this->_logger);
-                    $_workers[$i]->start();
+                    $this->_workers[] = new Task($this->_logger, $task);
 
-                    $response = ResponseHelper::createTaskResponse(ResponseState::Running, $tasks[$i]);
-                    $this->_sender->send($response);
+                    //$response = ResponseHelper::createTaskResponse(ResponseState::Running, $tasks[$i]);
+                    //$this->_sender->send($response);
                 }
             }
 
-            foreach (range(1,  (count($tasks) - 9)) as $i) {
+            foreach ($this->_workers as $worker) {
+                $worker->start();
+            }
+
+            foreach ($this->_workers as $worker) {
 
                 if (!$GLOBALS['isStopped']) {
 
-                    $_workers[$i]->join();
-                    $isSuccess = $_workers[$i]->isSuccess();
-
+                    $worker->join();
+                    $isSuccess = $worker->isSuccess();
+//
                     $state = ($isSuccess) ? ResponseState::Success : ResponseState::Failure;
-                    $response = ResponseHelper::createTaskResponse($state, $tasks[$i]);
-                    $this->_sender->send($response);
+                    //$response = ResponseHelper::createTaskResponse($state, $tasks[$i]);
+                    //$this->_sender->send($response);
                 }
             }
             //TODO Logout
@@ -103,23 +108,21 @@ class MessagingEngine
         }
     }
 
-    /**
-     * Prepare tasks with all needed data
-     * @return array
-     */
     private function prepareTasks()
     {
         $preparedTasks = [];
 
-        foreach ($this->_userAccounts as $userAccount) {
+        foreach ($this->_eyesAccounts as $eyesAccount) {
 
-            $message = $this->getMessageBySex($userAccount['Sex']);
-            $eyesAccount = $this->getEyesAccountBySex($userAccount['Sex']);
+            $userAccounts = $this->getUserAccounts();
+            $eyesAccount['userAccounts'] = $userAccounts;
 
-            $userAccount['message'] = $message;
-            $userAccount['eyesAccount'] = $eyesAccount;
-            $userAccount['messages'] = $this->prepareMessage($userAccount['eyesAccount'], $userAccount, $userAccount['message']);
-            array_push($preparedTasks, $userAccount);
+            for ($i = 0; $i < count($eyesAccount['userAccounts']); $i++) {
+
+                $eyesAccount['userAccounts'][$i]['message'] = $this->prepareMessage($eyesAccount, $eyesAccount['userAccounts'][$i], $this->getShuffledMessage());
+            }
+
+            array_push($preparedTasks, $eyesAccount);
         }
 
         return $preparedTasks;
@@ -138,6 +141,7 @@ class MessagingEngine
             '$User.Name$' => $user['Name'],
             '$Account.Name$' => $account['Name'],
             '$Account.Fullname$' => $account['Fullname'],
+            '$User.PersonalMessage' => $user['PersonalMessage'],
             '$nl$' => "\n"
         ];
 
@@ -150,45 +154,37 @@ class MessagingEngine
         return $preparedMessage;
     }
 
-    /**
-     * Get message by the sex of the receiver
-     * @param $sex
-     * @return mixed
-     */
-    private function getMessageBySex($sex)
+    private function getShuffledMessage()
     {
-        $foundMessages = [];
+        if (isset($this->_eyesMessages) && count($this->_eyesMessages) > 0) {
 
-        foreach ($this->_eyesMessages as $message) {
-
-            if ($message['To'] == $sex) {
-                array_push($foundMessages, $message);
-            }
+            $totalMessage = count($this->_eyesMessages);
+            return ($this->_eyesMessages[rand(0, ($totalMessage - 1))]);
         }
-
-        return $foundMessages[mt_rand(0, 4)];
     }
 
-    /**
-     * Get eyes account by user sex
-     * @param $sex
-     * @return null
-     */
-    private function getEyesAccountBySex($sex)
+    private  function getUserAccounts()
     {
-        $foundAccount = null;
+        $userAccounts = [];
 
-        foreach ($this->_eyesAccounts as $account) {
+        if (isset($this->_userAccounts) && count($this->_userAccounts) > 1) {
 
-            if ($sex == 'M')
-                $sex = 'F';
-            else
-                $sex = 'F';
+            for ($i = 0; $i < 1; $i++) {
 
-            if ($account['Sexe'] == $sex)
-                $foundAccount = $account;
+                array_push($userAccounts, $this->_userAccounts[$i]);
+                unset($this->_userAccounts[$i]);
+            }
+            $this->_userAccounts = array_values($this->_userAccounts);
+
+            return $userAccounts;
+
+        }
+        else {
+            $userAccounts = $this->_userAccounts;
+            $this->_userAccounts = [];
+
+            return $userAccounts;
         }
 
-        return $foundAccount;
     }
 }

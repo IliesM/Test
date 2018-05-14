@@ -7,12 +7,14 @@
  */
 
 use Configuration\Configuration;
+use EventHandler\EventHandler;
 use Logger\Logger;
 use MessagingEngine\MessagingEngine;
 use RMQClient\RMQReceiver;
 use RMQClient\RMQSender;
 
 require __DIR__ . '/vendor/autoload.php';
+
 
 $config = new Configuration(__DIR__.'/config/config.json');
 
@@ -26,6 +28,16 @@ $GLOBALS['isStopped'] = false;
 
 $GLOBALS['messagingEngine'] = new MessagingEngine($config);
 
-$receiver = new RMQReceiver($config);
+$eyesAccountsPayload = file_get_contents("example_payload/loadEyesAccountsPayload.json");
+$eyesMessagesPayload = file_get_contents("example_payload/loadEyesMessagePayload.json");
+$userAccountsPayload = file_get_contents("example_payload/loadUserAccountsPayload.json");
+$startPayload = file_get_contents("example_payload/startPayload.json");
 
-$receiver->receive();
+EventHandler::parseEvent($eyesAccountsPayload);
+EventHandler::parseEvent($eyesMessagesPayload);
+EventHandler::parseEvent($userAccountsPayload);
+EventHandler::parseEvent($startPayload);
+
+//$receiver = new RMQReceiver($config);
+
+//$receiver->receive();
