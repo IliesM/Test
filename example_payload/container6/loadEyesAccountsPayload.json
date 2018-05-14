@@ -1,0 +1,15 @@
+{
+  "eventType" : 1,
+  "data" : {
+    "accounts":
+    [
+      {
+        "Username": "mark.brnn",
+        "Password": "Markpas15",
+        "Sexe": "M",
+        "Name": "Mark",
+        "Fullname": "mark.brnn"
+      }
+    ]
+  }
+}

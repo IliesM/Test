@@ -1,0 +1,14 @@
+{
+  "eventType" : 1,
+  "data" : {
+    "accounts":
+    [
+      {
+        "Username": "chamlon_tm",
+        "Password": "cocoilies",
+        "Sexe": "M",
+        "Name": "Chamlon",
+        "Fullname": "Ilies Chamlon"
+      }
+  }
+}
