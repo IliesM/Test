@@ -8,28 +8,26 @@ $ig = new \InstagramAPI\Instagram(false, false);
 
 $task = new TaskModel(json_decode($argv[1], true));
 
-//$loginState = $ig->login($task->getEyesAccountUsername(), $task->getEyesAccountPassword());
-//$loginState = json_decode($loginState, true);
+$loginState = $ig->login($task->getEyesAccountUsername(), $task->getEyesAccountPassword());
+$loginState = json_decode($loginState, true);
 
-if (/*$loginState["status"]*/ "ok" == "ok") {
-//    var_dump("login state ".$loginState);
+if ($loginState["status"] == "ok") {
 
     foreach ($task->getUserAccounts() as $userAccount) {
 
-        //var_dump(print_r($userAccount, 1));
-//        $ig->direct->sendText(
-//            [
-//                'users' => [
-//                    $userAccount['UserID']
-//            ]],
-//            $userAccount["message"]);
+        $ig->direct->sendText(
+            [
+                'users' => [
+                    $userAccount['UserID']
+            ]],
+            $userAccount["message"]);
         var_dump("message from ".$task->getEyesAccountUsername()." sent to ".$userAccount['Name']);
     }
 }
-//else
-//    var_dump("login state ".print_r($loginState, 1));
+else
+    var_dump("login state ".print_r($loginState, 1));
 
 
-//$logoutState = $ig->logout();
-//$logoutState = json_decode($logoutState, true)["status"];
-//var_dump("logout state ".$logoutState);
+$logoutState = $ig->logout();
+$logoutState = json_decode($logoutState, true)["status"];
+var_dump("logout state ".$logoutState);
