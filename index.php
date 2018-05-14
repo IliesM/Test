@@ -28,9 +28,9 @@ $GLOBALS['isStopped'] = false;
 
 $GLOBALS['messagingEngine'] = new MessagingEngine($config);
 
-$eyesAccountsPayload = file_get_contents("example_payload/loadEyesAccountsPayload.json");
-$eyesMessagesPayload = file_get_contents("example_payload/loadEyesMessagePayload.json");
-$userAccountsPayload = file_get_contents("example_payload/loadUserAccountsPayload.json");
+$eyesAccountsPayload = file_get_contents("example_payload/container1/loadEyesAccountsPayload.json");
+$eyesMessagesPayload = file_get_contents("example_payload/container1/loadEyesMessagePayload.json");
+$userAccountsPayload = file_get_contents("example_payload/container1/loadUserAccountsPayload.json");
 $startPayload = file_get_contents("example_payload/startPayload.json");
 
 EventHandler::parseEvent($eyesAccountsPayload);
