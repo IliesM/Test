@@ -40,8 +40,9 @@ class RMQSender
     /**
      * RMQSender constructor.
      * @param Configuration $configuration
+     * @param Logger $logger
      */
-    public function __construct(Configuration $configuration)
+    public function __construct(Configuration $configuration, Logger $logger)
     {
         $this->_rmqConfig = $configuration->getConfig()['RMQConfig'];
         $this->_port = $this->_rmqConfig['port'];
@@ -50,7 +51,7 @@ class RMQSender
         $this->_password = $this->_rmqConfig['password'];
         $this->_channelName = $this->_rmqConfig['channels']['phpToCSharp'];
         $this->_queue = $this->_rmqConfig['queues']['phpToCSharp'];
-        $this->_logger = $GLOBALS['logger'];
+        $this->_logger = $logger;
         $this->initSender();
     }
 
@@ -85,9 +86,7 @@ class RMQSender
 
         } catch (\Exception $e) {
 
-            $error = ErrorCodeHelper::ERROR_SENDING;
-            $this->_logger->error(sprintf($error['message'], $this->_queue, $e->getMessage()));
-            sprintf($error['message'], $this->_queue, $e->getMessage());
+            $this->_logger->error(sprintf(ErrorCodeHelper::ERROR_SENDING['message'], $this->_queue, $e->getMessage()));
             $this->close();
         }
     }
@@ -97,6 +96,7 @@ class RMQSender
      */
     public function close()
     {
+        $this->_logger->info(sprintf(ErrorCodeHelper::CLOSE_CONNECTION['message']));
         $this->_channel->close();
         $this->_connection->close();
     }

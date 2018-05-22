@@ -21,10 +21,9 @@ class ResponseHelper
     {
         $response = [];
 
-        $response["state"] = $state;
-//        $response["data"]['user'] = $payload['UserID'];
-//        $response["data"]['message'] = $payload['message'];
-//        $response["data"]['eyesAccount'] = $payload['eyesAccount'];
+        //var_dump(print_r($payload, 1));
+        $response["eventType"] = $state;
+        $response["data"] = $payload;
 
         return json_encode($response);
     }

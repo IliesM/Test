@@ -21,4 +21,8 @@ class ErrorCodeHelper
     const CONNECTION_ERROR = ['code' => 1003, 'message' => 'Error while connecting AMPQ client : %s'.PHP_EOL];
     const CONFIG_FILE_NOT_FOUND = ['code' => 1004, 'message' => 'Config/config.json file not found'.PHP_EOL];
     const CONFIG_FILE_ERROR = ['code' => 1005, 'message' => 'config.json error : %s'.PHP_EOL];
+    const INSTA_SEND_ERROR = ['code' => 2001, 'message' => 'Error occured while sending direct message %s'.PHP_EOL];
+    const INSTA_LOGGIN_ERROR = ['code' => 2002, 'message' => 'Error while logging in insta account %s %s'.PHP_EOL];
+    const CLOSE_CONNECTION = ['code' => 1005, 'message' => 'Closing AMQP connection'.PHP_EOL];
+    const TASK_PARSING_ERROR = ['code' => 3001, 'message' => 'Task is not well initialized for container #%s'.PHP_EOL];
 }

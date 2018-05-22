@@ -24,7 +24,7 @@ class EventType
             3 => 'loadEyesMessages',
             4 => 'start',
             5 => 'stop',
-            6 => 'forceUpdate'
+            6 => 'done'
         ];
 
         return ($events[$eventType]);

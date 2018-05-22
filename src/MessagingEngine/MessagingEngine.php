@@ -9,6 +9,7 @@
 namespace MessagingEngine;
 
 use Configuration\Configuration;
+use EventHandler\EventType;
 use EventHandler\ResponseState;
 use Helpers\ErrorCodeHelper;
 use Helpers\ResponseHelper;
@@ -46,8 +47,8 @@ class MessagingEngine
         $this->_userAccounts = null;
         $this->_eyesAccounts = null;
         $this->_eyesMessages = null;
+        $this->_sender = $GLOBALS['sender'];
         $this->_logger = $GLOBALS['logger'];
-        //$this->_sender = new RMQSender($configuration);
         $this->_workers = [];
     }
 
@@ -71,40 +72,19 @@ class MessagingEngine
         if ($this->_userAccounts && $this->_eyesAccounts && $this->_eyesMessages) {
 
             $tasks = $this->prepareTasks();
-            //TODO Login
+
             foreach ($tasks as $task) {
 
                 if (!$GLOBALS['isStopped']) {
-                    $this->_workers[] = new Task($this->_logger, $task);
 
-                    //$response = ResponseHelper::createTaskResponse(ResponseState::Running, $tasks[$i]);
-                    //$this->_sender->send($response);
+                    $task = json_encode($task);
+                    system('php instadm.php '."'".$task."' > /dev/null &");
                 }
             }
-
-            foreach ($this->_workers as $worker) {
-                $worker->start();
-            }
-
-            foreach ($this->_workers as $worker) {
-
-                if (!$GLOBALS['isStopped']) {
-
-                    $worker->join();
-                    $isSuccess = $worker->isSuccess();
-//
-                    $state = ($isSuccess) ? ResponseState::Success : ResponseState::Failure;
-                    //$response = ResponseHelper::createTaskResponse($state, $tasks[$i]);
-                    //$this->_sender->send($response);
-                }
-            }
-            //TODO Logout
         }
         else {
-
-            $error = ErrorCodeHelper::BAD_INITIALIZATION;
-            $this->_logger->error($error['message']);
-            ResponseHelper::createErrorResponse($error);
+            $this->_logger->error(ErrorCodeHelper::BAD_INITIALIZATION['message']);
+            $this->_sender->send(ResponseHelper::createErrorResponse(ErrorCodeHelper::BAD_INITIALIZATION));
         }
     }
 
@@ -163,13 +143,13 @@ class MessagingEngine
         }
     }
 
-    private  function getUserAccounts()
+    private function getUserAccounts()
     {
         $userAccounts = [];
 
-        if (isset($this->_userAccounts) && count($this->_userAccounts) > 1) {
+        if (isset($this->_userAccounts) && count($this->_userAccounts) > 41) {
 
-            for ($i = 0; $i < 1; $i++) {
+            for ($i = 0; $i < 41; $i++) {
 
                 array_push($userAccounts, $this->_userAccounts[$i]);
                 unset($this->_userAccounts[$i]);
@@ -187,4 +167,5 @@ class MessagingEngine
         }
 
     }
+
 }

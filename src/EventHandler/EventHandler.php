@@ -8,12 +8,15 @@
 
 namespace EventHandler;
 
+use Helpers\ResponseHelper;
+
 class EventHandler
 {
 
     /**
      * Parse event and execute the right function
      * @param $payload
+     * @return bool
      */
     public static function parseEvent($payload)
     {
@@ -21,6 +24,10 @@ class EventHandler
 
         if (isset($event['eventType']))
         {
+            if ($event['eventType'] == 5) {
+                $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::NotReady, null));
+                return -1;
+            }
             $handler = EventType::getEvent($event['eventType']);
 
             self::$handler($event['data']);

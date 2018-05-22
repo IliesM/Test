@@ -11,7 +11,9 @@ namespace RMQClient;
 
 use Configuration\Configuration;
 use EventHandler\EventHandler;
+use EventHandler\ResponseState;
 use Helpers\ErrorCodeHelper;
+use Helpers\ResponseHelper;
 use Logger\Logger;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
@@ -37,6 +39,7 @@ class RMQReceiver
     private $_user;
     private $_password;
     private $_queue;
+    private $_sender;
 
     /**
      * RMQSender constructor.
@@ -52,24 +55,25 @@ class RMQReceiver
         $this->_channelName = $this->_rmqConfig['channels']['cSharpToPhp'];
         $this->_queue = $this->_rmqConfig['queues']['cSharpToPhp'];
         $this->_logger = $GLOBALS['logger'];
-        $this->initSender();
+        $this->_sender = $GLOBALS['sender'];
+
+        $this->initReceiver();
     }
 
     /**
      * Initialize RMQReceiver
      */
-    private function initSender()
+    private function initReceiver()
     {
        try {
 
            $this->_connection = new AMQPStreamConnection($this->_host, $this->_port, $this->_user, $this->_password);
            $this->_channel = $this->_connection->channel();
+           $this->_channel->queue_bind($this->_queue, 'containers', getenv('CONTAINER'));
 
        } catch (\Exception $e) {
 
-           $error = ErrorCodeHelper::CONNECTION_ERROR;
-           $this->_logger->error(sprintf($error['message'], $this->_queue, $e->getMessage()));
-           sprintf($error['message'], $this->_queue, $e->getMessage());
+           $this->_logger->error(sprintf(ErrorCodeHelper::CONNECTION_ERROR['message'], $this->_queue.' '.$e->getMessage(), $e->getMessage()));
            exit(-1);
        }
     }
@@ -79,12 +83,13 @@ class RMQReceiver
      */
     public function receive()
     {
+        $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Ready, ['container' => getenv("CONTAINER")]));
         try {
-
             $callback = function ($msg) {
 
                 $this->_logger->info(sprintf("Message received %s", $msg->body));
-                EventHandler::parseEvent($msg->body);
+                if (EventHandler::parseEvent($msg->body) == -1)
+                    $this->close();
                 $this->_logger->info("Message successfully proceed");
             };
 
@@ -98,7 +103,6 @@ class RMQReceiver
 
             $error = ErrorCodeHelper::ERROR_RETRIEVING;
             $this->_logger->error(sprintf($error['message'], $this->_queue, $e->getMessage()));
-            sprintf($error['message'], $this->_queue, $e->getMessage());
             $this->close();
         }
     }
@@ -108,7 +112,10 @@ class RMQReceiver
      */
     public function close()
     {
+        $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::NotReady, null));
+        $this->_logger->info(sprintf(ErrorCodeHelper::CLOSE_CONNECTION['message']));
         $this->_channel->close();
         $this->_connection->close();
+        exit;
     }
 }

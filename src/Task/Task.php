@@ -43,7 +43,7 @@ class Task extends \Thread
                 $task = json_encode($this->_task);
 
                 //sleep($this->_timeToWait);
-                system('php instadm.php '."'".$task."'");
+                system('php instadm.php '."'".$task."' > /dev/null &");
                 $this->_success = true;
             }
 
@@ -51,7 +51,6 @@ class Task extends \Thread
 
             $this->_logger->error(sprintf("An error occurred while requesting InstagramApi : %s", $e->getMessage()));
             $this->_success = false;
-            //TODO Disconnect the account
         }
     }
 
