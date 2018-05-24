@@ -154,9 +154,9 @@ class MessagingEngine
     {
         $userAccounts = [];
 
-        if (isset($this->_userAccounts) && count($this->_userAccounts) > 41) {
+        if (isset($this->_userAccounts) && count($this->_userAccounts) > 40) {
 
-            for ($i = 0; $i < 41; $i++) {
+            for ($i = 0; $i < 40; $i++) {
 
                 array_push($userAccounts, $this->_userAccounts[$i]);
                 unset($this->_userAccounts[$i]);
