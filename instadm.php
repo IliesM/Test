@@ -65,7 +65,7 @@ class InstaDm {
 
                 $userAccount['eyesAccount'] = $this->_task->getEyesAccountUsername();
                 $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Running, $userAccount));
-                $ig->direct->sendText(['users' => [$userAccount['UserID']]], $userAccount["message"]);
+                $this->_ig->direct->sendText(['users' => [$userAccount['UserID']]], $userAccount["message"]);
                 $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Success, $userAccount));
                 //sleep(100);
                 sleep(rand(900, 1200));
