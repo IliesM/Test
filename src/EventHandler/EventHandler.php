@@ -26,7 +26,7 @@ class EventHandler
         {
             if ($event['eventType'] == 5) {
                 $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::NotReady, null));
-                return -1;
+                return (self::stop());
             }
             $handler = EventType::getEvent($event['eventType']);
 
@@ -72,9 +72,21 @@ class EventHandler
         $GLOBALS['messagingEngine']->startMessaging();
     }
 
-    public function stop($data)
+    public static function stop()
     {
-        echo 'Application has been paused'.PHP_EOL;
-        $GLOBALS['isStopped'] = true;
+        @system("rm pids.log");
+        @system("ps -ef | grep instadm | grep -v grep | awk '{print $2}' >> pids.log");
+        $pids = explode("\n", file_get_contents("pids.log"));
+
+        foreach ($pids as $pid)
+        {
+            @system("kill ".$pid);
+        }
+
+        $GLOBALS['sender']->purge();
+        sleep(1);
+        echo 'Application has been stopped'.PHP_EOL;
+        $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::Ready, null));
+        return 1;
     }
 }

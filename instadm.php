@@ -29,14 +29,14 @@ class InstaDm {
 
     public function login()
     {
+
         if (!$this->_task && !isset($this->_task)) {
             $this->_logger->error(sprintf(ErrorCodeHelper::TASK_PARSING_ERROR['message'], getenv('CONTAINER')));
             exit;
         }
-
-        //$this->_loginState = $this->_ig->login($this->_task->getEyesAccountUsername(), $this->_task->getEyesAccountPassword());
-        //$this->_loginState = json_decode($this->_loginState, true)['status'];
-        $this->_loginState = "ok";
+        $this->_loginState = $this->_ig->login($this->_task->getEyesAccountUsername(), $this->_task->getEyesAccountPassword());
+        $this->_loginState = json_decode($this->_loginState, true)['status'];
+       // $this->_loginState = "ok";
 
         if ($this->_loginState && isset($this->_loginState)) {
 
@@ -63,12 +63,12 @@ class InstaDm {
 
            foreach ($this->_task->getUserAccounts() as $userAccount) {
 
-               sleep(1);
-               $userAccount['eyesAccount'] = $this->_task->getEyesAccountUsername();
-               $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Running, $userAccount));
-//            $ig->direct->sendText(['users' => [$userAccount['UserID']]], $userAccount["message"]);
-               $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Success, $userAccount));
-//            sleep(rand(900, 1200));
+                $userAccount['eyesAccount'] = $this->_task->getEyesAccountUsername();
+                $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Running, $userAccount));
+                $ig->direct->sendText(['users' => [$userAccount['UserID']]], $userAccount["message"]);
+                $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Success, $userAccount));
+                //sleep(100);
+                sleep(rand(900, 1200));
            }
 
            $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Done, ['Username' => $this->_task->getEyesAccountUsername()]));
@@ -87,7 +87,7 @@ class InstaDm {
     {
         //$this->_logger->error(sprintf(ErrorCodeHelper::INSTA_LOGGIN_ERROR['message'], $this->_task->getEyesAccountUsername(), print_r($this->_loginState, 1)));
         //$this->_sender->send(ResponseHelper::createErrorResponse(ErrorCodeHelper::INSTA_LOGGIN_ERROR, $this->_task->getEyesAccountUsername()));
-        //$this->_ig->logout();
+        $this->_ig->logout();
         $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::LoggedOut, ['Username' => $this->_task->getEyesAccountUsername()]));
         exit;
     }

@@ -21,9 +21,9 @@ class ResponseHelper
     {
         $response = [];
 
-        //var_dump(print_r($payload, 1));
         $response["eventType"] = $state;
         $response["data"] = $payload;
+        $response["data"]["container"] = getenv("CONTAINER");
 
         return json_encode($response);
     }

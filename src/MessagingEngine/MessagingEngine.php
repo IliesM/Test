@@ -69,18 +69,25 @@ class MessagingEngine
     {
         $this->loadData();
 
+//        var_dump(print_r($this->_userAccounts, 1));
+//        var_dump(print_r($this->_eyesAccounts, 1));
+//        var_dump(print_r($this->_eyesMessages, 1));
         if ($this->_userAccounts && $this->_eyesAccounts && $this->_eyesMessages) {
 
+            $TotalMessages = 0;
             $tasks = $this->prepareTasks();
+
 
             foreach ($tasks as $task) {
 
                 if (!$GLOBALS['isStopped']) {
 
+                    $TotalMessages += count($task['userAccounts']);
                     $task = json_encode($task);
                     system('php instadm.php '."'".$task."' > /dev/null &");
                 }
             }
+            $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Update, ["totalMessages" => $TotalMessages]));
         }
         else {
             $this->_logger->error(ErrorCodeHelper::BAD_INITIALIZATION['message']);

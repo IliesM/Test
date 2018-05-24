@@ -19,4 +19,5 @@ class ResponseState
     const Done = 6;
     const Ready = 7;
     const NotReady = 8;
+    const Update = 9;
 }

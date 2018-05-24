@@ -52,8 +52,8 @@ class RMQReceiver
         $this->_host = $this->_rmqConfig['host'];
         $this->_user = $this->_rmqConfig['user'];
         $this->_password = $this->_rmqConfig['password'];
-        $this->_channelName = $this->_rmqConfig['channels']['cSharpToPhp'];
-        $this->_queue = $this->_rmqConfig['queues']['cSharpToPhp'];
+        $this->_channelName = "ui".getenv("CONTAINER");/*$this->_rmqConfig['channels']['cSharpToPhp'];*/
+        $this->_queue = "ui".getenv("CONTAINER");/*$this->_rmqConfig['queues']['cSharpToPhp'];*/
         $this->_logger = $GLOBALS['logger'];
         $this->_sender = $GLOBALS['sender'];
 
@@ -69,7 +69,7 @@ class RMQReceiver
 
            $this->_connection = new AMQPStreamConnection($this->_host, $this->_port, $this->_user, $this->_password);
            $this->_channel = $this->_connection->channel();
-           $this->_channel->queue_bind($this->_queue, 'containers', getenv('CONTAINER'));
+           $this->_channel->queue_declare($this->_queue, false, false, false, false);
 
        } catch (\Exception $e) {
 
@@ -83,11 +83,12 @@ class RMQReceiver
      */
     public function receive()
     {
-        $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Ready, ['container' => getenv("CONTAINER")]));
+        $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Ready, null));
         try {
             $callback = function ($msg) {
 
                 $this->_logger->info(sprintf("Message received %s", $msg->body));
+
                 if (EventHandler::parseEvent($msg->body) == -1)
                     $this->close();
                 $this->_logger->info("Message successfully proceed");

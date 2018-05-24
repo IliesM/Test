@@ -49,8 +49,8 @@ class RMQSender
         $this->_host = $this->_rmqConfig['host'];
         $this->_user = $this->_rmqConfig['user'];
         $this->_password = $this->_rmqConfig['password'];
-        $this->_channelName = $this->_rmqConfig['channels']['phpToCSharp'];
-        $this->_queue = $this->_rmqConfig['queues']['phpToCSharp'];
+        $this->_channelName = "container".getenv("CONTAINER");/*$this->_rmqConfig['channels']['phpToCSharp'];*/
+        $this->_queue = "container".getenv("CONTAINER");/*$this->_rmqConfig['queues']['phpToCSharp'];*/
         $this->_logger = $logger;
         $this->initSender();
     }
@@ -64,6 +64,7 @@ class RMQSender
 
             $this->_connection = new AMQPStreamConnection($this->_host, $this->_port, $this->_user, $this->_password);
             $this->_channel = $this->_connection->channel();
+            $this->_channel->queue_declare($this->_queue, false, false, false, false);
 
         } catch (\Exception $e) {
 
@@ -80,15 +81,21 @@ class RMQSender
     public function send($data)
     {
         try {
-
-            $msg = new AMQPMessage($data);
-            $this->_channel->basic_publish($msg, '', $this->_queue);
+            if (isset($data)) {
+                $msg = new AMQPMessage($data);
+                $this->_channel->basic_publish($msg, '', $this->_queue);
+            }
 
         } catch (\Exception $e) {
 
             $this->_logger->error(sprintf(ErrorCodeHelper::ERROR_SENDING['message'], $this->_queue, $e->getMessage()));
             $this->close();
         }
+    }
+
+    public function purge()
+    {
+        $this->_channel->queue_purge($this->_queue);
     }
 
     /**

@@ -34,9 +34,9 @@ $eyesMessagesPayload = file_get_contents("example_payload/dev/loadEyesMessagePay
 $userAccountsPayload = file_get_contents("example_payload/dev/loadUserAccountsPayload.json");
 $startPayload = file_get_contents("example_payload/startPayload.json");
 
-EventHandler::parseEvent($eyesAccountsPayload);
-EventHandler::parseEvent($eyesMessagesPayload);
-EventHandler::parseEvent($userAccountsPayload);
+//EventHandler::parseEvent($eyesAccountsPayload);
+//EventHandler::parseEvent($eyesMessagesPayload);
+//EventHandler::parseEvent($userAccountsPayload);
 //EventHandler::parseEvent($startPayload);
 $receiver = new RMQReceiver($config);
 
