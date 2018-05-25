@@ -57,8 +57,7 @@ class InstaDm {
            $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::LogginFailure, ['Username' => $this->_task->getEyesAccountUsername()]));
            $this->_logger->info(printf("Error while login in : %s", $e->getMessage()));
            $this->_task->addError();
-           $this->logout(true);
-           $this->login();
+           $this->logout();
        }
     }
 
@@ -95,6 +94,7 @@ class InstaDm {
         try {
             if ($tryLogout == true) {
                 $this->_ig->logout();
+                $this->login();
             }
             else {
                 $this->_ig->logout();
@@ -113,6 +113,6 @@ $config->loadConfiguration();
 $task = new TaskModel(json_decode($argv[1], true));
 
 $instadm = new InstaDm($config, $task);
-$instadm->logout();
+$instadm->logout(true);
 $instadm->login();
 
