@@ -89,4 +89,16 @@ class EventHandler
         $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::Ready, null));
         return 1;
     }
+
+    public static function connectVpn($data)
+    {
+        $vpnNumber = $data["vpn"]["number"];
+        $vpnLocalisation = $data["vpn"]["localization"];
+        $vpnLicence = explode(';', $data["vpn"]["licence"]);
+        $openVpnServerPath = "/etc/openvpn/ovpn_tcp/";
+
+        system("printf \"".$vpnLicence[0]."\\n".$vpnLicence[1]."\" >> ".$openVpnServerPath."user.txt");
+        system("printf \"auth-user-path user.txt\n\" > ".$openVpnServerPath.$vpnLocalisation.$vpnNumber.".nordvpn.com.tcp.ovpn");
+        $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::Ready, null));
+    }
 }
