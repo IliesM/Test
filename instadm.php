@@ -38,7 +38,7 @@ class InstaDm {
         }
        try {
            $this->_loginState = $this->_ig->login($this->_task->getEyesAccountUsername(), $this->_task->getEyesAccountPassword());
-           $this->_logger->info($this->_loginState);
+           //$this->_logger->info("--->".$this->_loginState);
            $this->_loginState = json_decode($this->_loginState, true)['status'];
            // $this->_loginState = "ok";
 
@@ -56,10 +56,10 @@ class InstaDm {
 
        } catch (\Exception $e) {
 
+           $this->_logger->info(sprintf("Error while login in : %s", $e->getMessage()));
            $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::LogginFailure, ['Username' => $this->_task->getEyesAccountUsername()]));
-           $this->_logger->info(printf("Error while login in : %s", $e->getMessage()));
            $this->_task->addError();
-           $this->logout();
+           //$this->logout();
        }
     }
 
@@ -74,7 +74,7 @@ class InstaDm {
                 $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Running, $userAccount));
                 $this->_ig->direct->sendText(['users' => [$userAccount['UserID']]], $userAccount["message"]);
                 $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Success, $userAccount));
-                sleep(rand(900, 1000));
+                sleep(rand(900, 1200));
            }
 
            $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Done, ['Username' => $this->_task->getEyesAccountUsername()]));
