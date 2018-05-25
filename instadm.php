@@ -37,7 +37,6 @@ class InstaDm {
             exit;
         }
        try {
-           $this->logout(true);
            $this->_loginState = $this->_ig->login($this->_task->getEyesAccountUsername(), $this->_task->getEyesAccountPassword());
            $this->_loginState = json_decode($this->_loginState, true)['status'];
            // $this->_loginState = "ok";
@@ -54,9 +53,12 @@ class InstaDm {
                $this->logout();
 
        } catch (\Exception $e) {
+
            $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::LogginFailure, ['Username' => $this->_task->getEyesAccountUsername()]));
+           $this->_logger->info(printf("Error while login in : %s", $e->getMessage()));
            $this->_task->addError();
            $this->logout(true);
+           $this->login();
        }
     }
 
@@ -88,14 +90,18 @@ class InstaDm {
        }
     }
 
-    public function logout($forceLogout = false)
+    public function logout($tryLogout = false)
     {
         try {
-            $this->_ig->logout();
-            $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::LoggedOut, ['Username' => $this->_task->getEyesAccountUsername()]));
-            if ($forceLogout == false) {
+            if ($tryLogout == true) {
+                $this->_ig->logout();
+            }
+            else {
+                $this->_ig->logout();
+                $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::LoggedOut, ['Username' => $this->_task->getEyesAccountUsername()]));
                 exit;
             }
+
         } catch (\Exception $e) {
             $this->_logger->info(sprintf("Error while logout : %s", $e->getMessage()));
         }
@@ -107,5 +113,6 @@ $config->loadConfiguration();
 $task = new TaskModel(json_decode($argv[1], true));
 
 $instadm = new InstaDm($config, $task);
+$instadm->logout();
 $instadm->login();
 
