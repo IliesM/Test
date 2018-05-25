@@ -38,6 +38,7 @@ class InstaDm {
         }
        try {
            $this->_loginState = $this->_ig->login($this->_task->getEyesAccountUsername(), $this->_task->getEyesAccountPassword());
+           $this->_logger->info($this->_loginState);
            $this->_loginState = json_decode($this->_loginState, true)['status'];
            // $this->_loginState = "ok";
 
@@ -46,6 +47,7 @@ class InstaDm {
 
                    if ($this->_loginState == "ok") {
 
+                       $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Logged, ['Username' => $this->_task->getEyesAccountUsername()]));
                        $this->process();
                    }
                }
@@ -64,8 +66,6 @@ class InstaDm {
     public function process()
     {
        try {
-
-           $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Logged, ['Username' => $this->_task->getEyesAccountUsername()]));
 
            foreach ($this->_task->getUserAccounts() as $userAccount) {
 
@@ -113,6 +113,5 @@ $config->loadConfiguration();
 $task = new TaskModel(json_decode($argv[1], true));
 
 $instadm = new InstaDm($config, $task);
-$instadm->logout(true);
 $instadm->login();
 
