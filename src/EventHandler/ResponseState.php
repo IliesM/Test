@@ -20,4 +20,5 @@ class ResponseState
     const Ready = 7;
     const NotReady = 8;
     const Update = 9;
+    const LogginFailure = 10;
 }
