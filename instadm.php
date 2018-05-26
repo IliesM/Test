@@ -42,7 +42,7 @@ class InstaDm {
            $this->_loginState = json_decode($this->_loginState, true)['status'];
            // $this->_loginState = "ok";
 
-           if (!$this->_task->getErrorCount() == 2) {
+           if ($this->_task->getErrorCount() != 2) {
                if ($this->_loginState && isset($this->_loginState)) {
 
                    if ($this->_loginState == "ok") {
