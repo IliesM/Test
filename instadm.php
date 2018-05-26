@@ -37,10 +37,12 @@ class InstaDm {
             exit;
         }
        try {
+           $this->_logger->info($this->_task->getEyesAccountUsername().' '.$this->_task->getEyesAccountPassword());
+           $this->logout(true);
            $this->_loginState = $this->_ig->login($this->_task->getEyesAccountUsername(), $this->_task->getEyesAccountPassword());
            //$this->_logger->info("--->".$this->_loginState);
            $this->_loginState = json_decode($this->_loginState, true)['status'];
-           // $this->_loginState = "ok";
+           $this->_loginState = "ok";
 
            if ($this->_task->getErrorCount() != 2) {
                if ($this->_loginState && isset($this->_loginState)) {
@@ -94,7 +96,7 @@ class InstaDm {
         try {
             if ($tryLogout == true) {
                 $this->_ig->logout();
-                $this->login();
+                return;
             }
             else {
                 $this->_ig->logout();
