@@ -24,7 +24,10 @@ class EventType
             3 => 'loadEyesMessages',
             4 => 'start',
             5 => 'stop',
-            6 => 'done'
+            6 => 'connectVpn',
+            7 => 'disconnectVpn',
+            8 => 'requestState',
+            9 => 'updateUserBase'
         ];
 
         return ($events[$eventType]);

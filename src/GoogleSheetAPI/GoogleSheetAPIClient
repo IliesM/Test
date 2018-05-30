@@ -1,0 +1,43 @@
+<?php
+
+namespace GoogleSheetAPI;
+
+use Google_Client;
+use Google_Service_Sheets;
+
+class GoogleSheetAPIClient
+{
+
+    private $_client;
+    private $_apiKey = "AIzaSyCIk3Y-jg6gfyissl5w3xlpFQwlzpMJ9W";
+    private $_spreadsheetId = '128mwKifC56JhhDnVXTh0OKdLGwOfcH95uwazq7wJsog';
+    private $_service;
+
+    public function __construct()
+    {
+        $this->_client = new Google_Client();
+        $this->_client->setScopes([Google_Service_Sheets::SPREADSHEETS]);
+        $this->_client->setDeveloperKey($this->_apiKey);
+        $this->_service = new Google_Service_Sheets($this->_client);
+    }
+
+    public function getClient()
+    {
+        return $this->_client;
+    }
+
+    public function getService()
+    {
+        return $this->_service;
+    }
+
+    public function getSpreadSheetId()
+    {
+        return $this->_spreadsheetId;
+    }
+
+    public function getApiKey()
+    {
+        return $this->_apiKey;
+    }
+}

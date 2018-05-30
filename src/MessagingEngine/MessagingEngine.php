@@ -84,7 +84,7 @@ class MessagingEngine
 
                     $TotalMessages += count($task['userAccounts']);
                     $task = json_encode($task);
-                    system('php instadm.php '."'".$task."' > /dev/null &");
+                    system('php instadm.php '."'".$task."' > instadm.log &");
                 }
             }
             $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Update, ["totalMessages" => $TotalMessages]));

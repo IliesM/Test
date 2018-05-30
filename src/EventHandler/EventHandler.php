@@ -8,6 +8,10 @@
 
 namespace EventHandler;
 
+use Google_Client;
+use Google_Service_Sheets;
+use Google_Service_Sheets_ValueRange;
+use GoogleSheetAPI\GoogleSheetAPIClient;
 use Helpers\ResponseHelper;
 
 class EventHandler
@@ -84,7 +88,6 @@ class EventHandler
         }
 
         $GLOBALS['sender']->purge();
-        sleep(1);
         echo 'Application has been stopped'.PHP_EOL;
         $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::Ready, null));
         return 1;
@@ -92,13 +95,79 @@ class EventHandler
 
     public static function connectVpn($data)
     {
-        $vpnNumber = $data["vpn"]["number"];
-        $vpnLocalisation = $data["vpn"]["localization"];
-        $vpnLicence = explode(';', $data["vpn"]["licence"]);
+        $data = json_decode($data, true);
+        $vpnNumber = $data["number"];
+        $vpnLocalisation = $data["location"];
+        $vpnLicence = explode(';', $data["licence"]);
         $openVpnServerPath = "/etc/openvpn/ovpn_tcp/";
+        $vpnPid = explode("\n", file_get_contents("vpn.log"));
 
-        system("printf \"".$vpnLicence[0]."\\n".$vpnLicence[1]."\" >> ".$openVpnServerPath."user.txt");
-        system("printf \"auth-user-path user.txt\n\" > ".$openVpnServerPath.$vpnLocalisation.$vpnNumber.".nordvpn.com.tcp.ovpn");
+        if (isset($data) && $data != "") {
+            system("printf \"" . $vpnLicence[0] . "\\n" . $vpnLicence[1] . "\" > " . $openVpnServerPath . "user.txt");
+            //system("printf \"auth-user-path user.txt\n\" >> " . $openVpnServerPath . $vpnLocalisation . $vpnNumber . ".nordvpn.com.tcp.ovpn");
+            @system("kill " . $vpnPid[0]);
+            @system("rm vpn.log");
+            system("cd ".$openVpnServerPath.";"." openvpn --config ". $vpnLocalisation . $vpnNumber . ".nordvpn.com.tcp.ovpn  --auth-user-pass user.txt  &");
+            system("ps -ef | grep openvpn | grep -v grep | awk '{print $2}' >> vpn.log");
+            sleep(5);
+            $vpnStatus = system("ip link show dev tun0 > /dev/null; echo $?");
+            if ($vpnStatus == "0" || $vpnStatus == 0) {
+                //$GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::Ready, null));
+                $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::VpnConnected, ["email" => $vpnLicence[0], "password" => $vpnLicence[1], "localisation" => $vpnLocalisation, "number" => $vpnNumber]));
+                $GLOBALS['vpn'] = ["state" => ResponseState::VpnConnected, "email" => $vpnLicence[0], "password" => $vpnLicence[1], "localisation" => $vpnLocalisation, "number" => $vpnNumber];
+            } else {
+                //$GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::NotReady, null));
+                $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::VpnNotConnected, ["email" => $vpnLicence[0], "password" => $vpnLicence[1], "localisation" => $vpnLocalisation, "number" => $vpnNumber]));
+                $GLOBALS['vpn'] = ["state" => ResponseState::VpnNotConnected, "email" => $vpnLicence[0], "password" => $vpnLicence[1], "localisation" => $vpnLocalisation, "number" => $vpnNumber];
+            }
+        }
+    }
+
+    public static function disconnectVpn()
+    {
+        $vpnPid = explode("\n", file_get_contents("vpn.log"));
+        @system("kill " . $vpnPid[0]);
+        $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::VpnNotConnected, null));
+        $GLOBALS['vpn'] = ["state" => ResponseState::VpnNotConnected];
+    }
+
+    public static function requestState($data)
+    {
         $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::Ready, null));
+        $GLOBALS['sender']->send(ResponseHelper::createTaskResponse($GLOBALS['vpn']["state"], ["email" => $GLOBALS['vpn']['email'], "password" => $GLOBALS['vpn']['password'], "localisation" => $GLOBALS['vpn']['localisation'], "number" => $GLOBALS['vpn']['number']]));
+    }
+
+    public static function updateUserBase($data)
+    {
+        $columnNumber = 8;
+        $apiKey = "AIzaSyCxJ7U3CZXlCjhECGltVITRUILbwO43UXk";
+        $spreadsheetId = '1XKFVaoCOYf5886DvxpK57O7QgoF-yIArAfsUzkjoxI4';
+
+        $client = new Google_Client();
+        $client->setScopes([Google_Service_Sheets::SPREADSHEETS]);
+        $client->setAuthConfig('My Project-fe48b187403f.json');
+        $service = new Google_Service_Sheets($client);
+        $users = json_decode($data, true);
+        $response = $service->spreadsheets_values->get($spreadsheetId, "A1:Z10000");
+
+        $lineToInsert = count($users);
+        $actualNbLines = count($response["values"]);
+        $valuesToInsert = [];
+        $date = new \DateTime();
+
+        foreach ($users as $user) {
+            array_push($valuesToInsert, [$user["Sender"], $user["Username"], $date->format("Y-m-d"), $user["UserURL"]]);
+        }
+
+        $postBody = new Google_Service_Sheets_ValueRange(['values' => $valuesToInsert]);
+        var_dump(print_r($postBody, 1));
+        $requests = [new \Google_Service_Sheets_Request(
+            [
+                
+            ]
+        )];
+
+        $response = $service->spreadsheets_values->append($spreadsheetId, "A:E", $postBody, ["valueInputOption" => "RAW"]);
+        var_dump(print_r($response, 1));
     }
 }

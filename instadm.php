@@ -26,6 +26,7 @@ class InstaDm {
         $this->_logger = new Logger($config);
         $this->_sender = new RMQSender($config, $this->_logger);
         $this->_task = $task;
+        $this->_logger->info(print_r($task->getUserAccounts(), 1));
         $this->_ig = $ig = new Instagram(false, false);
     }
 
@@ -37,9 +38,10 @@ class InstaDm {
             exit;
         }
        try {
+
            $this->_logger->info($this->_task->getEyesAccountUsername().' '.$this->_task->getEyesAccountPassword());
-           $this->logout(true);
-           $this->_loginState = $this->_ig->login($this->_task->getEyesAccountUsername(), $this->_task->getEyesAccountPassword());
+           //$this->logout(true);
+           //$this->_loginState = $this->_ig->login($this->_task->getEyesAccountUsername(), $this->_task->getEyesAccountPassword());
            //$this->_logger->info("--->".$this->_loginState);
            $this->_loginState = json_decode($this->_loginState, true)['status'];
            $this->_loginState = "ok";
@@ -74,9 +76,9 @@ class InstaDm {
                 //sleep(180);
                 $userAccount['eyesAccount'] = $this->_task->getEyesAccountUsername();
                 $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Running, $userAccount));
-                $this->_ig->direct->sendText(['users' => [$userAccount['UserID']]], $userAccount["message"]);
+                //$this->_ig->direct->sendText(['users' => [$userAccount['UserID']]], $userAccount["message"]);
                 $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Success, $userAccount));
-                sleep(rand(900, 1200));
+                sleep(rand(2, 10));
            }
 
            $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Done, ['Username' => $this->_task->getEyesAccountUsername()]));
@@ -113,6 +115,7 @@ class InstaDm {
 $config = new Configuration(__DIR__.'/config/config.json');
 $config->loadConfiguration();
 $task = new TaskModel(json_decode($argv[1], true));
+
 
 $instadm = new InstaDm($config, $task);
 $instadm->login();

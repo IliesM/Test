@@ -18,7 +18,8 @@
           "RMQClient\\": "src/RMQClient",
           "Task\\": "src/Task",
 	      "Helpers\\": "src/Helpers",
-          "Model\\": "src/Model"
+          "Model\\": "src/Model",
+          "GoogleSheetAPI\\": "src/GoogleSheetAPI"
         }
     },
     "authors": [

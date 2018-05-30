@@ -21,4 +21,6 @@ class ResponseState
     const NotReady = 8;
     const Update = 9;
     const LogginFailure = 10;
+    const VpnConnected = 11;
+    const VpnNotConnected = 12;
 }
