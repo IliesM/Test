@@ -163,7 +163,7 @@ class EventHandler
         var_dump(print_r($postBody, 1));
         $requests = [new \Google_Service_Sheets_Request(
             [
-                
+
             ]
         )];
 

@@ -40,8 +40,8 @@ class InstaDm {
        try {
 
            $this->_logger->info($this->_task->getEyesAccountUsername().' '.$this->_task->getEyesAccountPassword());
-           //$this->logout(true);
-           //$this->_loginState = $this->_ig->login($this->_task->getEyesAccountUsername(), $this->_task->getEyesAccountPassword());
+           $this->logout(true);
+           $this->_loginState = $this->_ig->login($this->_task->getEyesAccountUsername(), $this->_task->getEyesAccountPassword());
            //$this->_logger->info("--->".$this->_loginState);
            $this->_loginState = json_decode($this->_loginState, true)['status'];
            $this->_loginState = "ok";
@@ -76,9 +76,9 @@ class InstaDm {
                 //sleep(180);
                 $userAccount['eyesAccount'] = $this->_task->getEyesAccountUsername();
                 $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Running, $userAccount));
-                //$this->_ig->direct->sendText(['users' => [$userAccount['UserID']]], $userAccount["message"]);
+                $this->_ig->direct->sendText(['users' => [$userAccount['UserID']]], $userAccount["message"]);
                 $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Success, $userAccount));
-                sleep(rand(2, 10));
+                sleep(rand(900, 1200));
            }
 
            $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Done, ['Username' => $this->_task->getEyesAccountUsername()]));
