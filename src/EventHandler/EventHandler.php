@@ -147,27 +147,57 @@ class EventHandler
         $client->setScopes([Google_Service_Sheets::SPREADSHEETS]);
         $client->setAuthConfig('My Project-fe48b187403f.json');
         $service = new Google_Service_Sheets($client);
-        $users = json_decode($data, true);
+     //   $users = json_decode($data, true);
         $response = $service->spreadsheets_values->get($spreadsheetId, "A1:Z10000");
 
-        $lineToInsert = count($users);
+       // $lineToInsert = count($users);
         $actualNbLines = count($response["values"]);
         $valuesToInsert = [];
         $date = new \DateTime();
 
-        foreach ($users as $user) {
+        /*foreach ($users as $user) {
             array_push($valuesToInsert, [$user["Sender"], $user["Username"], $date->format("Y-m-d"), $user["UserURL"]]);
-        }
+        }*/
 
         $postBody = new Google_Service_Sheets_ValueRange(['values' => $valuesToInsert]);
-        var_dump(print_r($postBody, 1));
-        $requests = [new \Google_Service_Sheets_Request(
-            [
+        //var_dump(print_r($postBody, 1));
 
-            ]
-        )];
+        $gridRangeObject = new \Google_Service_Sheets_GridRange();
+        $sortSpecsObject = new \Google_Service_Sheets_SortSpec();
+        $sortRangeRequest = new \Google_Service_Sheets_SortRangeRequest();
+        $batchUpdate = new \Google_Service_Sheets_BatchUpdateSpreadsheetRequest();
+        $gridRangeObject->setSheetId($spreadsheetId);
+        $gridRangeObject->setStartColumnIndex(0);
+        $gridRangeObject->setStartRowIndex(1);
+       // $gridRangeObject->setEndColumnIndex(4);
+       // $gridRangeObject->setEndRowIndex();
+
+        $sortSpecsObject->setDimensionIndex(0);
+        $sortSpecsObject->setSortOrder("ASCENDING");
+        $sortRangeRequest->setSortSpecs([$sortSpecsObject]);
+        $sortRangeRequest->setRange($gridRangeObject);
+        $batchUpdate->setRequests(
+            [
+                "sortRange" => [
+                    "sortSpecs" => [
+                        [
+                            "dimensionIndex" => 0,
+                            "sortOrder"=> "ASCENDING"
+                        ]
+                    ],
+                    "range" => [
+                        "startRowIndex" => 1
+                    ]
+                ]
+            ]);
 
         $response = $service->spreadsheets_values->append($spreadsheetId, "A:E", $postBody, ["valueInputOption" => "RAW"]);
-        var_dump(print_r($response, 1));
+        //var_dump(print_r($response, 1));
+
+
+        $response = $service->spreadsheets->batchUpdate($spreadsheetId, $batchUpdate);
+        //var_dump(print_r($batchUpdate, 1));
+        //var_dump(print_r($response, 1));
+
     }
 }
