@@ -107,9 +107,9 @@ class EventHandler
             //system("printf \"auth-user-path user.txt\n\" >> " . $openVpnServerPath . $vpnLocalisation . $vpnNumber . ".nordvpn.com.tcp.ovpn");
             @system("kill " . $vpnPid[0]);
             @system("rm vpn.log");
-            system("cd ".$openVpnServerPath.";"." openvpn --config ". $vpnLocalisation . $vpnNumber . ".nordvpn.com.tcp.ovpn  --auth-user-pass user.txt  &");
+            system("cd ".$openVpnServerPath.";"." openvpn --config ". $vpnLocalisation . $vpnNumber . ".nordvpn.com.tcp.ovpn  --auth-user-pass user.txt > /dev/null &");
             system("ps -ef | grep openvpn | grep -v grep | awk '{print $2}' >> vpn.log");
-            sleep(5);
+            sleep(10);
             $vpnStatus = system("ip link show dev tun0 > /dev/null; echo $?");
             if ($vpnStatus == "0" || $vpnStatus == 0) {
                 //$GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::Ready, null));
