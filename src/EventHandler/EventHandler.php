@@ -147,17 +147,17 @@ class EventHandler
         $client->setScopes([Google_Service_Sheets::SPREADSHEETS]);
         $client->setAuthConfig('My Project-fe48b187403f.json');
         $service = new Google_Service_Sheets($client);
-     //   $users = json_decode($data, true);
+        $users = json_decode($data, true);
         $response = $service->spreadsheets_values->get($spreadsheetId, "A1:Z10000");
 
-       // $lineToInsert = count($users);
+        $lineToInsert = count($users);
         $actualNbLines = count($response["values"]);
         $valuesToInsert = [];
         $date = new \DateTime();
 
-        /*foreach ($users as $user) {
+        foreach ($users as $user) {
             array_push($valuesToInsert, [$user["Sender"], $user["Username"], $date->format("Y-m-d"), $user["UserURL"]]);
-        }*/
+        }
 
         $postBody = new Google_Service_Sheets_ValueRange(['values' => $valuesToInsert]);
         //var_dump(print_r($postBody, 1));
