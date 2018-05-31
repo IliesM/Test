@@ -192,12 +192,12 @@ class EventHandler
             ]);
 
         $response = $service->spreadsheets_values->append($spreadsheetId, "A:E", $postBody, ["valueInputOption" => "RAW"]);
-        //var_dump(print_r($response, 1));
+        var_dump(print_r($response, 1));
 
 
         $response = $service->spreadsheets->batchUpdate($spreadsheetId, $batchUpdate);
-        //var_dump(print_r($batchUpdate, 1));
-        //var_dump(print_r($response, 1));
+        var_dump(print_r($batchUpdate, 1));
+        var_dump(print_r($response, 1));
 
     }
 }
