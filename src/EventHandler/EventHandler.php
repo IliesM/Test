@@ -196,8 +196,8 @@ class EventHandler
 
 
         $response = $service->spreadsheets->batchUpdate($spreadsheetId, $batchUpdate);
-        var_dump(print_r($batchUpdate, 1));
-        var_dump(print_r($response, 1));
+        //var_dump(print_r($batchUpdate, 1));
+        //var_dump(print_r($response, 1));
 
     }
 }

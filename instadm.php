@@ -52,6 +52,7 @@ class InstaDm {
                    if ($this->_loginState == "ok") {
 
                        $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Logged, ['Username' => $this->_task->getEyesAccountUsername()]));
+                       sleep(20);
                        $this->process();
                    }
                }
