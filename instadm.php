@@ -69,6 +69,7 @@ class InstaDm {
     public function process()
     {
            foreach ($this->_task->getUserAccounts() as $userAccount) {
+
                try {
 
                     $userAccount['eyesAccount'] = $this->_task->getEyesAccountUsername();
