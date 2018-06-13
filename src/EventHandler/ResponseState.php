@@ -23,4 +23,6 @@ class ResponseState
     const LogginFailure = 10;
     const VpnConnected = 11;
     const VpnNotConnected = 12;
+    const UserFileUpdated = 13;
+    const UserFileNotUpdated = 14;
 }

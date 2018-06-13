@@ -192,8 +192,13 @@ class EventHandler
             ]);
 
         $response = $service->spreadsheets_values->append($spreadsheetId, "A:E", $postBody, ["valueInputOption" => "RAW"]);
-        var_dump(print_r($response, 1));
+        if ($response->getUpdates()->getUpdatedRows() != null) {
 
+            $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::UserFileUpdated, null));
+            var_dump(print_r($response, 1));
+        }
+        else
+            $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::UserFileNotUpdated, null));
 
         $response = $service->spreadsheets->batchUpdate($spreadsheetId, $batchUpdate);
         //var_dump(print_r($batchUpdate, 1));
