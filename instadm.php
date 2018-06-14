@@ -51,7 +51,7 @@ class InstaDm {
                    if ($this->_loginState == "ok") {
 
                        $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Logged, ['Username' => $this->_task->getEyesAccountUsername()]));
-                       //sleep(20);
+                       sleep(20);
                        $this->process();
                    }
                }
@@ -84,11 +84,10 @@ class InstaDm {
                        //Renvoyer le compte en defaut à l'ui
                        $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Failure, $userAccount));
                    }
+            }
 
-           $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Done, ['Username' => $this->_task->getEyesAccountUsername()]));
-           $this->logout();
-
-       }
+        $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Done, ['Username' => $this->_task->getEyesAccountUsername()]));
+        $this->logout();
     }
 
     public function logout($tryLogout = false)
