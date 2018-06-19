@@ -29,6 +29,7 @@ class EventHandler
         if (isset($event['eventType']))
         {
             if ($event['eventType'] == 5) {
+
                 $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::NotReady, null));
                 return (self::stop());
             }
@@ -78,9 +79,7 @@ class EventHandler
 
     public static function stop()
     {
-        @system("rm pids.log");
-        @system("ps -ef | grep instadm | grep -v grep | awk '{print $2}' >> pids.log");
-        $pids = explode("\n", file_get_contents("pids.log"));
+        $pids = explode('\n', system("ps -ef | grep instadm | grep -v grep | awk '{print $2}'"));
 
         foreach ($pids as $pid)
         {
@@ -100,35 +99,50 @@ class EventHandler
         $vpnLocalisation = $data["location"];
         $vpnLicence = explode(';', $data["licence"]);
         $openVpnServerPath = "/etc/openvpn/ovpn_tcp/";
-        $vpnPid = explode("\n", file_get_contents("vpn.log"));
 
+        self::disconnectVpn();
+        self::setVpnLicence($vpnLicence[0], $vpnLicence[1]);
         if (isset($data) && $data != "") {
-            system("printf \"" . $vpnLicence[0] . "\\n" . $vpnLicence[1] . "\" > " . $openVpnServerPath . "user.txt");
-            //system("printf \"auth-user-path user.txt\n\" >> " . $openVpnServerPath . $vpnLocalisation . $vpnNumber . ".nordvpn.com.tcp.ovpn");
-            @system("kill " . $vpnPid[0]);
-            @system("rm vpn.log");
-            system("cd ".$openVpnServerPath.";"." openvpn --config ". $vpnLocalisation . $vpnNumber . ".nordvpn.com.tcp.ovpn  --auth-user-pass user.txt > /dev/null &");
-            system("ps -ef | grep openvpn | grep -v grep | awk '{print $2}' >> vpn.log");
-            sleep(10);
+
+            system("openvpn --config ".$openVpnServerPath.$vpnLocalisation.$vpnNumber.".nordvpn.com.tcp.ovpn --auth-user-pass " . $openVpnServerPath . "user.txt > /dev/null &");
+            sleep(7);
             $vpnStatus = system("ip link show dev tun0 > /dev/null; echo $?");
-            if ($vpnStatus == "0" || $vpnStatus == 0) {
-                //$GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::Ready, null));
-                $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::VpnConnected, ["email" => $vpnLicence[0], "password" => $vpnLicence[1], "localisation" => $vpnLocalisation, "number" => $vpnNumber]));
-                $GLOBALS['vpn'] = ["state" => ResponseState::VpnConnected, "email" => $vpnLicence[0], "password" => $vpnLicence[1], "localisation" => $vpnLocalisation, "number" => $vpnNumber];
-            } else {
-                //$GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::NotReady, null));
+
+            if ($vpnStatus == "1") {
+
+                self::disconnectVpn();
+                self::connectVpn($data);
                 $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::VpnNotConnected, ["email" => $vpnLicence[0], "password" => $vpnLicence[1], "localisation" => $vpnLocalisation, "number" => $vpnNumber]));
                 $GLOBALS['vpn'] = ["state" => ResponseState::VpnNotConnected, "email" => $vpnLicence[0], "password" => $vpnLicence[1], "localisation" => $vpnLocalisation, "number" => $vpnNumber];
+            }
+            else {
+
+                print "Vpn connected to " . $vpnLocalisation.$vpnNumber . PHP_EOL;
+                system("cat ".$openVpnServerPath.'user.txt');
+                $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::VpnConnected, ["email" => $vpnLicence[0], "password" => $vpnLicence[1], "localisation" => $vpnLocalisation, "number" => $vpnNumber]));
+                $GLOBALS['vpn'] = ["state" => ResponseState::VpnConnected, "email" => $vpnLicence[0], "password" => $vpnLicence[1], "localisation" => $vpnLocalisation, "number" => $vpnNumber];
+                print PHP_EOL;
             }
         }
     }
 
+    public static function setVpnLicence($email, $password)
+    {
+        system("printf \"" . $email . "\\n" . $password . "\" > /etc/openvpn/ovpn_tcp/user.txt");
+    }
+
     public static function disconnectVpn()
     {
-        $vpnPid = explode("\n", file_get_contents("vpn.log"));
-        @system("kill " . $vpnPid[0]);
-        $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::VpnNotConnected, null));
-        $GLOBALS['vpn'] = ["state" => ResponseState::VpnNotConnected];
+        $vpnPids = explode('\n', system("ps -ef | grep openvpn | grep -v grep | awk '{print $2}'"));
+
+        foreach ($vpnPids as $vpnPid) {
+
+            if (isset($vpnPid) && $vpnPid != "") {
+
+                system("kill " . $vpnPid);
+                print "Vpn disconnected" . PHP_EOL;
+            }
+        }
     }
 
     public static function requestState($data)
@@ -191,7 +205,7 @@ class EventHandler
                 ]
             ]);
 
-        $response = $service->spreadsheets_values->append($spreadsheetId, "A:E", $postBody, ["valueInputOption" => "RAW"]);
+        $response = $service->spreadsheets_values->append($spreadsheetId, "A:D", $postBody, ["valueInputOption" => "RAW"]);
         if ($response->getUpdates()->getUpdatedRows() != null) {
 
             $GLOBALS['sender']->send(ResponseHelper::createTaskResponse(ResponseState::UserFileUpdated, null));

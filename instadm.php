@@ -20,6 +20,7 @@ class InstaDm {
     private $_sender;
     private $_logger;
     private $_ig;
+    private $_failedSending;
 
     public function __construct(Configuration $config, TaskModel $task)
     {
@@ -58,36 +59,51 @@ class InstaDm {
            } else
                $this->logout();
 
-       } catch (\Exception $e) {
+       } catch (\InstagramAPI\Exception\ChallengeRequiredException $cr) {
 
-           $this->_logger->info(sprintf("Error while login in : %s", $e->getMessage()));
+           $this->_logger->info(sprintf("Error while login in : %s", $cr->getMessage()));
            $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::LogginFailure, ['Username' => $this->_task->getEyesAccountUsername()]));
-           //$this->logout();
+
        }
     }
 
-    public function process()
+    public function process($retry = false)
     {
-           foreach ($this->_task->getUserAccounts() as $userAccount) {
+        foreach ($this->_task->getUserAccounts() as $userAccount) {
 
-               try {
+            try {
 
-                    $userAccount['eyesAccount'] = $this->_task->getEyesAccountUsername();
-                    $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Running, $userAccount));
-                    $this->_ig->direct->sendText(['users' => [$userAccount['UserID']]], $userAccount["message"]);
-                    $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Success, $userAccount));
-                    sleep(rand(900, 1200));
-
-                   }
-                   catch (\Exception $e) {
-
-                       //Renvoyer le compte en defaut à l'ui
-                       $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Failure, $userAccount));
-                   }
+                $userAccount['eyesAccount'] = $this->_task->getEyesAccountUsername();
+                $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Running, $userAccount));
+                $this->_ig->direct->sendText(['users' => [$userAccount['UserID']]], $userAccount["message"]);
+                $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Success, $userAccount));
+                sleep(rand(900, 1200));
+                //sleep(1);
             }
+            catch (\Exception $e) {
 
+                $this->_logger->error("Error while sending message : " . $e->getMessage());
+                if ($retry)
+                    $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Failure, $userAccount));
+                else
+                    $this->_failedSending[] = $userAccount;
+            }
+        }
+
+        if (!$retry)
+            $this->retryFailure();
         $this->_sender->send(ResponseHelper::createTaskResponse(ResponseState::Done, ['Username' => $this->_task->getEyesAccountUsername()]));
         $this->logout();
+    }
+
+    private function retryFailure()
+    {
+        if (isset($this->_failedSending) && count($this->_failedSending) > 0) {
+
+            $this->_logger->warn("There is some failure : ".count($this->_failedSending));
+            $this->_task->setUserAccounts($this->_failedSending);
+            $this->process(true);
+        }
     }
 
     public function logout($tryLogout = false)
@@ -104,6 +120,7 @@ class InstaDm {
             }
 
         } catch (\Exception $e) {
+
             $this->_logger->info(sprintf("Error while logout : %s", $e->getMessage()));
         }
     }

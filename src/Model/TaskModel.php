@@ -63,5 +63,12 @@ class TaskModel
         $this->_errorCount += 1;
     }
 
+    /**
+     * @param mixed $userAccounts
+     */
+    public function setUserAccounts($userAccounts)
+    {
+        $this->_userAccounts = $userAccounts;
+    }
 
 }
